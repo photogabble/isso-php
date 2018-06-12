@@ -30,7 +30,7 @@ class ApiController extends Controller
      */
     public function postNew(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'new']);
     }
 
     /**
@@ -54,7 +54,7 @@ class ApiController extends Controller
      * @param array $args
      * @return JsonResponse
      */
-    public function postCounts(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function postCount(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
         return new JsonResponse(['msg' => 'counts']);
     }
@@ -69,7 +69,7 @@ class ApiController extends Controller
      */
     public function getFeed(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'feed']);
     }
 
     /**
@@ -82,7 +82,7 @@ class ApiController extends Controller
      */
     public function getView(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'view', 'id' => (int) $args['id']]);
     }
 
     /**
@@ -94,7 +94,7 @@ class ApiController extends Controller
      */
     public function putEdit(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'edit', 'id' => (int) $args['id']]);
     }
 
     /**
@@ -107,7 +107,7 @@ class ApiController extends Controller
      */
     public function deleteDelete(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'delete', 'id' => (int) $args['id']]);
     }
 
     /**
@@ -120,7 +120,7 @@ class ApiController extends Controller
      */
     public function getModerate(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'getModerate', 'id' => (int) $args['id'], 'action' => $args['action'], 'key' => $args['key']]);
     }
 
     /**
@@ -132,7 +132,7 @@ class ApiController extends Controller
      */
     public function postModerate(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'postModerate', 'id' => (int) $args['id'], 'action' => $args['action'], 'key' => $args['key']]);
     }
 
     /**
@@ -145,7 +145,7 @@ class ApiController extends Controller
      */
     public function postLike(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'like', 'id' => (int) $args['id']]);
     }
 
     /**
@@ -157,7 +157,7 @@ class ApiController extends Controller
      */
     public function postDislike(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'dislike', 'id' => (int) $args['id']]);
     }
 
     /**
@@ -169,7 +169,7 @@ class ApiController extends Controller
      */
     public function getDemo(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'demo']);
     }
 
     /**
@@ -182,7 +182,7 @@ class ApiController extends Controller
      */
     public function postPreview(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'preview']);
     }
 
     /**
@@ -195,7 +195,7 @@ class ApiController extends Controller
      */
     public function postLogin(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'login']);
     }
 
     /**
@@ -208,6 +208,6 @@ class ApiController extends Controller
      */
     public function getAdmin(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'admin']);
     }
 }

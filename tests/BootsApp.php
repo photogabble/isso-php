@@ -10,6 +10,7 @@ class BootsApp extends TestCase
 {
     /** @var App */
     protected $app;
+
     /** @var TestEmitter */
     protected $emitter;
 
@@ -28,10 +29,15 @@ class BootsApp extends TestCase
         });
     }
 
+    /**
+     * @param ServerRequest $request
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Exception
+     */
     protected function runRequest(ServerRequest $request)
     {
         $this->app->run($request);
-        return (string)$this->emitter->getResponse()->getBody();
+        return $this->emitter->getResponse();
     }
 
     protected function assertResponseOk()
