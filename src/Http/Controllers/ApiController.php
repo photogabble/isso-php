@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Entities\Comment;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
@@ -21,12 +22,16 @@ class ApiController extends Controller
 
         $args = [
             'uri' => isset($q['uri']) ? (string) $q['uri'] : '',
-            'after' => isset($q['after']) ? (int) $q['after'] : 0,
+            'after' => isset($q['after']) ? (int) $q['after'] : null,
             'parent' => isset($q['parent']) ? (int) $q['parent'] : 0,
-            'limit' => isset($q['limit']) ? (int) $q['limit'] : 0,
+            'limit' => isset($q['limit']) ? (int) $q['limit'] : null,
             'nested_limit' => isset($q['nested_limit']) ? (int) $q['nested_limit'] : 0,
             'plain' => isset($q['plain']) ? ($q['plain'] === '1') : false,
         ];
+
+        $this->entityManager->getRepository(Comment::class)->findBy([
+            'uri' => $args['uri']
+        ], null, $args['limit'], $args['after']);
 
         return new JsonResponse(['msg' => 'fetch']);
     }
