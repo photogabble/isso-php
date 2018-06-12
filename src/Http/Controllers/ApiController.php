@@ -17,6 +17,17 @@ class ApiController extends Controller
      */
     public function getFetch(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
+        $q = $request->getQueryParams();
+
+        $args = [
+            'uri' => isset($q['uri']) ? (string) $q['uri'] : '',
+            'after' => isset($q['after']) ? (int) $q['after'] : 0,
+            'parent' => isset($q['parent']) ? (int) $q['parent'] : 0,
+            'limit' => isset($q['limit']) ? (int) $q['limit'] : 0,
+            'nested_limit' => isset($q['nested_limit']) ? (int) $q['nested_limit'] : 0,
+            'plain' => isset($q['plain']) ? ($q['plain'] === '1') : false,
+        ];
+
         return new JsonResponse(['msg' => 'fetch']);
     }
 
