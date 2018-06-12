@@ -34,6 +34,24 @@ class Routes extends AbstractServiceProvider implements BootableServiceProviderI
         /** @var App $app */
         $app = $this->getContainer()->get(App::class);
 
-        $app->get('/', '\App\Http\Controllers\ApiController::index');
+        $app->get('/', '\App\Http\Controllers\ApiController::getFetch');
+        $app->post('/new', '\App\Http\Controllers\ApiController::postNew');
+        $app->get('/count', '\App\Http\Controllers\ApiController::getCount');
+        $app->post('/count', '\App\Http\Controllers\ApiController::postCount');
+        $app->get('/feed', '\App\Http\Controllers\ApiController::getFeed');
+        $app->get('/id/{id}', '\App\Http\Controllers\ApiController::getView');
+        $app->put('/id/{id}', '\App\Http\Controllers\ApiController::putEdit');
+        $app->delete('/id/{id}', '\App\Http\Controllers\ApiController::deleteDelete');
+        $app->get('/id/{id}/{action}/{key}', '\App\Http\Controllers\ApiController::getModerate');
+        $app->post('/id/{id}/{action}/{key}', '\App\Http\Controllers\ApiController::postModerate');
+
+        $app->post('/id/{id}/like', '\App\Http\Controllers\ApiController::postLike');
+        $app->post('/id/{id}/dislike', '\App\Http\Controllers\ApiController::postDislike');
+
+        $app->get('/demo', '\App\Http\Controllers\ApiController::getDemo');
+        $app->post('/preview', '\App\Http\Controllers\ApiController::postPreview');
+
+        $app->post('/login', '\App\Http\Controllers\ApiController::postLogin');
+        $app->get('/admin', '\App\Http\Controllers\ApiController::getAdmin');
     }
 }
