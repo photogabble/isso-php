@@ -1,0 +1,30 @@
+{
+  "name": "photogabble/isso-php",
+  "description": "A PHP port of the Disqus alternative Isso",
+  "type": "project",
+  "require": {
+    "photogabble/tuppence": "^1.1",
+    "doctrine/dbal": "^2.5",
+    "doctrine/orm": "^2.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "App\\Tests\\": "tests"
+    }
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Simon Dann",
+      "email": "simon.dann@gmail.com"
+    }
+  ]
+}
