@@ -43,7 +43,7 @@ class ApiController extends Controller
      */
     public function getCount(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'count']);
     }
 
     /**
@@ -56,7 +56,7 @@ class ApiController extends Controller
      */
     public function postCounts(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse(['msg' => 'counts']);
     }
 
     /**
