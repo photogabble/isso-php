@@ -5,6 +5,7 @@ namespace App\Entities;
 /**
  * @Entity
  * @Table(name="comments")
+ * @Entity(repositoryClass="App\Repositories\CommentRepository")
  */
 class Comment
 {
@@ -13,6 +14,13 @@ class Comment
      * @Id @Column(type="integer") @GeneratedValue
      */
     private $id;
+
+    /**
+     * Many Comments have One Thread
+     * @ManyToOne(targetEntity="Thread", inversedBy="comments")
+     * @JoinColumn(name="tid", referencedColumnName="id")
+     */
+    private $threads;
 
     /**
      * @var int
@@ -91,5 +99,4 @@ class Comment
      * @Column(type="blob")
      */
     private $voters;
-
 }

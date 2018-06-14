@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Entities\Comment;
+use App\Entities\Thread;
+use App\Repositories\CommentRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
@@ -22,18 +24,22 @@ class ApiController extends Controller
 
         $args = [
             'uri' => isset($q['uri']) ? (string) $q['uri'] : '',
-            'after' => isset($q['after']) ? (int) $q['after'] : null,
+            'after' => isset($q['after']) ? (int) $q['after'] : 0,
             'parent' => isset($q['parent']) ? (int) $q['parent'] : 0,
-            'limit' => isset($q['limit']) ? (int) $q['limit'] : null,
+            'limit' => isset($q['limit']) ? (int) $q['limit'] : 100,
             'nested_limit' => isset($q['nested_limit']) ? (int) $q['nested_limit'] : 0,
             'plain' => isset($q['plain']) ? ($q['plain'] === '1') : false,
         ];
 
-        $this->entityManager->getRepository(Comment::class)->findBy([
-            'uri' => $args['uri']
-        ], null, $args['limit'], $args['after']);
+        /** @var CommentRepository $repository */
+        $repository = $this->entityManager->getRepository(Comment::class);
 
-        return new JsonResponse(['msg' => 'fetch']);
+        return new JsonResponse([
+            'hidden_replies' => 0,
+            'id' => null,
+            'replies' => $repository->lookupCommentsByUri($args['uri'], 1, $args['after'], $args['limit']),
+            'total_replies' => 0
+        ]);
     }
 
     /**

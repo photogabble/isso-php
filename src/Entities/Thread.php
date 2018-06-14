@@ -2,6 +2,8 @@
 
 namespace App\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * @Entity
  * @Table(name="threads")
@@ -15,6 +17,12 @@ class Thread
     private $id;
 
     /**
+     * One Thread has many Comments
+     * @OneToMany(targetEntity="Comment", mappedBy="thread")
+     */
+    private $comments;
+
+    /**
      * @var string
      * @Column(type="string")
      */
@@ -25,4 +33,8 @@ class Thread
      * @Column(type="string")
      */
     private $title;
+
+    public function __construct() {
+        $this->comments = new ArrayCollection();
+    }
 }
