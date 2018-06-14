@@ -2,8 +2,6 @@
 
 namespace App\Http;
 
-use App\Entities\Comment;
-
 class JsonFormat
 {
     /**

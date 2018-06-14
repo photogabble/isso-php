@@ -37,4 +37,20 @@ class Thread
     public function __construct() {
         $this->comments = new ArrayCollection();
     }
+
+    /**
+     * @param string $uri
+     */
+    public function setUri(string $uri)
+    {
+        $this->uri = $uri;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
+    }
 }

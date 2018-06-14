@@ -18,6 +18,7 @@ class ApiController extends Controller
      * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getFetch(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
@@ -26,7 +27,7 @@ class ApiController extends Controller
         $args = [
             'uri' => isset($q['uri']) ? (string) $q['uri'] : '',
             'after' => isset($q['after']) ? (int) $q['after'] : 0,
-            'parent' => isset($q['parent']) ? (int) $q['parent'] : 0,
+            'parent' => isset($q['parent']) ? (int) $q['parent'] : null,
             'limit' => isset($q['limit']) ? (int) $q['limit'] : 100,
             'nested_limit' => isset($q['nested_limit']) ? (int) $q['nested_limit'] : 0,
             'plain' => isset($q['plain']) ? ($q['plain'] === '1') : false,
@@ -34,15 +35,17 @@ class ApiController extends Controller
 
         /** @var CommentRepository $repository */
         $repository = $this->entityManager->getRepository(Comment::class);
-        $replies = $repository->lookupCommentsByUri($args['uri'], 1, $args['after'], $args['limit']);
+
+        $count = $repository->countCommentsByUri($args['uri'], 1, $args['parent']);
+        $replies = $repository->lookupCommentsByUri($args['uri'], 1, $args['parent'], $args['after'], $args['limit']);
 
         return new JsonResponse([
-            'hidden_replies' => 0,
-            'id' => null,
+            'hidden_replies' => $count > 0 ? max($count - $args['limit'], 0) : 0,
+            'id' => $args['parent'],
             'replies' => array_map(function(Comment $comment){
                 return $comment->toJsonFormat();
             }, $replies),
-            'total_replies' => 0
+            'total_replies' => $count
         ]);
     }
 
