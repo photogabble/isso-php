@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Entities;
+use App\Http\JsonFormat;
 
 /**
  * @Entity
@@ -20,7 +21,7 @@ class Comment
      * @ManyToOne(targetEntity="Thread", inversedBy="comments")
      * @JoinColumn(name="tid", referencedColumnName="id")
      */
-    private $threads;
+    private $thread;
 
     /**
      * @var int
@@ -99,4 +100,21 @@ class Comment
      * @Column(type="blob")
      */
     private $voters;
+
+    public function toJsonFormat(): JsonFormat
+    {
+        $format = new JsonFormat();
+        $format->id = $this->id;
+        $format->parent = $this->parent;
+        $format->text = $this->text;
+        $format->author = $this->author;
+        $format->website = $this->website;
+        $format->created = $this->created;
+        $format->modified = $this->modified;
+        $format->likes = $this->likes;
+        $format->dislikes = $this->dislikes;
+        $format->hash = hash_pbkdf2('sha256', $this->text.$this->author.$this->created.$this->modified, 'Eech7co8Ohloopo9Ol6baimi', 100, 12);
+
+        return $format;
+    }
 }

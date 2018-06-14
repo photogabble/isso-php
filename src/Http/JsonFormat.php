@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Entities\Comment;
+
 class JsonFormat
 {
     /**
@@ -72,4 +74,19 @@ class JsonFormat
      * @var int
      */
     public $dislikes = 0;
+
+    /**
+     * @var int
+     */
+    public $hidden_replies = 0;
+
+    /**
+     * @var array
+     */
+    public $replies = [];
+
+    /**
+     * @var int
+     */
+    public $total_replies = 0;
 }

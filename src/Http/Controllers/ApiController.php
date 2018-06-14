@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Entities\Comment;
 use App\Entities\Thread;
+use App\Http\JsonFormat;
 use App\Repositories\CommentRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,11 +34,14 @@ class ApiController extends Controller
 
         /** @var CommentRepository $repository */
         $repository = $this->entityManager->getRepository(Comment::class);
+        $replies = $repository->lookupCommentsByUri($args['uri'], 1, $args['after'], $args['limit']);
 
         return new JsonResponse([
             'hidden_replies' => 0,
             'id' => null,
-            'replies' => $repository->lookupCommentsByUri($args['uri'], 1, $args['after'], $args['limit']),
+            'replies' => array_map(function(Comment $comment){
+                return $comment->toJsonFormat();
+            }, $replies),
             'total_replies' => 0
         ]);
     }
