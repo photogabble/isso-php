@@ -4,6 +4,8 @@ namespace App\Tests;
 
 use Photogabble\Tuppence\App;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 
 class BootsApp extends TestCase
@@ -14,10 +16,10 @@ class BootsApp extends TestCase
     /** @var TestEmitter */
     protected $emitter;
 
-    public function setUp()
-    {
-        $this->bootApp();
-    }
+    /**
+     * @var ResponseInterface|null
+     */
+    protected $lastRequest;
 
     protected function bootApp()
     {
@@ -36,12 +38,20 @@ class BootsApp extends TestCase
      */
     protected function runRequest(ServerRequest $request)
     {
+        $this->bootApp();
         $this->app->run($request);
-        return $this->emitter->getResponse();
+        $this->lastRequest = $this->emitter->getResponse();
+        return $this->lastRequest;
     }
 
     protected function assertResponseOk()
     {
-        $this->assertEquals(200, $this->emitter->getResponse()->getStatusCode());
+        $this->assertFalse(is_null($this->lastRequest));
+        $this->assertEquals(200, $this->lastRequest->getStatusCode());
+    }
+
+    protected function assertJsonResponse()
+    {
+        $this->assertInstanceOf(JsonResponse::class, $this->lastRequest);
     }
 }

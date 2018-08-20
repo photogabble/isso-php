@@ -14,11 +14,30 @@ class RoutesTest extends BootsApp
         $this->assertEquals('{"msg":"fetch"}', (string) $response->getBody());
     }
 
+    /**
+     * Port of isso python testGet
+     * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L53
+     * @throws \Exception
+     */
     public function testNewRoute()
     {
-        $response = $this->runRequest(new ServerRequest([], [], '/new', 'POST'));
+        $response = $this->runRequest(new ServerRequest([], [], '/new?uri=%2Fpath%2F', 'POST', 'php://input', [], [], [
+            'text' => 'Lorem ipsum ...'
+        ]));
+
         $this->assertResponseOk();
-        $this->assertEquals('{"msg":"new"}', (string) $response->getBody());
+        $this->assertJsonResponse();
+
+        $n = (string) $response->getBody();
+
+        $response = $response = $this->runRequest(new ServerRequest([], [], '/id/1', 'GET' ));
+
+        $this->assertJsonResponse();
+
+        $this->assertEquals(['id' => 1, 'text' => 'Lorem ipsum ...'], json_decode($response->getBody(), true));
+        $n= 1;
+
+        //$this->assertEquals('{"msg":"new"}', (string) $response->getBody());
     }
 
     public function testCountRoute()
