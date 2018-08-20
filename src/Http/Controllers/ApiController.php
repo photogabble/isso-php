@@ -2,8 +2,6 @@
 namespace App\Http\Controllers;
 
 use App\Entities\Comment;
-use App\Entities\Thread;
-use App\Http\JsonFormat;
 use App\Repositories\CommentRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,14 +22,14 @@ class ApiController extends Controller
     {
         $q = $request->getQueryParams();
 
-        $args = [
+        $args = array_merge([
             'uri' => isset($q['uri']) ? (string) $q['uri'] : '',
             'after' => isset($q['after']) ? (int) $q['after'] : 0,
             'parent' => isset($q['parent']) ? (int) $q['parent'] : null,
             'limit' => isset($q['limit']) ? (int) $q['limit'] : 100,
             'nested_limit' => isset($q['nested_limit']) ? (int) $q['nested_limit'] : 0,
             'plain' => isset($q['plain']) ? ($q['plain'] === '1') : false,
-        ];
+        ], $args);
 
         /** @var CommentRepository $repository */
         $repository = $this->entityManager->getRepository(Comment::class);
@@ -59,7 +57,16 @@ class ApiController extends Controller
      */
     public function postNew(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
     {
-        return new JsonResponse(['msg' => 'new']);
+        $q = $request->getQueryParams();
+
+        $args = array_merge([
+            'uri' => isset($q['uri']) ? (string) $q['uri'] : '',
+            'text' => isset($q['text']) ? (string) $q['text'] : '',
+        ], $args);
+
+        $id = null; // @todo finish this method
+
+        return new JsonResponse(['id' => $id]);
     }
 
     /**

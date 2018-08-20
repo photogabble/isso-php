@@ -54,4 +54,16 @@ class BootsApp extends TestCase
     {
         $this->assertInstanceOf(JsonResponse::class, $this->lastRequest);
     }
+
+    protected function assertJsonResponseValueEquals($key, $expected)
+    {
+        $decoded = json_decode($this->lastRequest->getBody(), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE){
+            $this->fail(json_last_error_msg());
+        }
+
+        $this->assertArrayHasKey($key, $decoded);
+        $this->assertEquals($expected, $decoded[$key]);
+    }
 }
