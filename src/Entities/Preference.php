@@ -5,6 +5,7 @@ namespace App\Entities;
 /**
  * @Entity
  * @Table(name="preferences")
+ * @Entity(repositoryClass="App\Repositories\Preferences")
  */
 class Preference
 {
