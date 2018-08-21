@@ -11,6 +11,17 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Comment
 {
+
+    const MODE_VALID = 1;
+    const MODE_PENDING = 2;
+    const MODE_SOFT_DELETED = 4;
+
+    /**
+     * @var int
+     * @Column(type="integer")
+     */
+    private $tid;
+
     /**
      * @var int
      * @Id @Column(type="integer") @GeneratedValue
@@ -24,12 +35,6 @@ class Comment
      * @JoinColumn(name="tid", referencedColumnName="id")
      */
     private $thread;
-
-    /**
-     * @var int
-     * @Column(type="integer")
-     */
-    private $tid;
 
     /**
      * @var Comment
@@ -57,6 +62,11 @@ class Comment
     private $modified;
 
     /**
+     * Status of the comment:
+     * 1: valid
+     * 2: pending
+     * 4: soft-deleted (unable to hard delete due to replies)
+     *
      * @var int
      * @Column(type="integer")
      */
