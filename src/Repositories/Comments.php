@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use Doctrine\ORM\EntityRepository;
 
-class CommentRepository extends EntityRepository
+class Comments extends EntityRepository
 {
 
     /**

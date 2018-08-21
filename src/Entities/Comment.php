@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @Entity
  * @Table(name="comments")
- * @Entity(repositoryClass="App\Repositories\CommentRepository")
+ * @Entity(repositoryClass="App\Repositories\Comments")
  */
 class Comment
 {
