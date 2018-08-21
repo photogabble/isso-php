@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @Entity
  * @Table(name="threads")
+ * @Entity(repositoryClass="App\Repositories\Threads")
  */
 class Thread
 {
@@ -34,6 +35,9 @@ class Thread
      */
     private $title;
 
+    /**
+     * Thread constructor.
+     */
     public function __construct() {
         $this->comments = new ArrayCollection();
     }
