@@ -84,6 +84,12 @@ class BootsApp extends TestCase
         return $decoded[$key];
     }
 
+    protected function assertJsonResponseEmpty()
+    {
+        $decoded = $this->getDecodedJsonResponse();
+        $this->assertEquals([], $decoded);
+    }
+
     protected function getDecodedJsonResponse()
     {
         if (!is_null($this->decodedJson)){

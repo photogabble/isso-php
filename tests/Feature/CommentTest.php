@@ -410,11 +410,10 @@ class CommentTest extends BootsApp
 
         $this->assertResponseStatusCodeEquals(201);
 
-        $this->runRequest(new ServerRequest([], [], '/id/1', 'DELETE', 'php://input', [], [], [
-            'uri' => '/path/'
-        ]));
+        $this->runRequest(new ServerRequest([], [], '/id/1', 'DELETE'));
 
         $this->assertResponseOk();
+        $this->assertJsonResponseEmpty();
 
         $this->runRequest(new ServerRequest([], [], '/id/1', 'GET'));
 
@@ -428,7 +427,68 @@ class CommentTest extends BootsApp
      */
     public function testDeleteWithReference()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        // Add parent comment
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => 'First',
+            'uri' => '/path/'
+        ]));
+
+        $this->assertResponseStatusCodeEquals(201);
+
+        // Add child comment
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => 'Second',
+            'parent' => 1,
+            'uri' => '/path/'
+        ]));
+
+        $this->assertResponseStatusCodeEquals(201);
+
+        // Delete parent comment
+        $this->runRequest(new ServerRequest([], [], '/id/1', 'DELETE'));
+
+        $this->assertResponseOk();
+        $this->assertJsonResponseValueEquals('mode', 4);
+
+        // @todo self.assertIn('/path/', self.app.db.threads)
+
+        // Assert parent comment returns 200 by uri even if content is deleted
+        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
+            'uri' => '/path/'
+        ]));
+
+        $this->assertResponseOk();
+        $this->assertJsonResponseValueEquals('total_replies', 1);
+
+        // Assert parent comment returns 200 by id even if content is deleted (maybe check the response doesn't return content?)
+        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
+            'uri' => '/path/',
+            'id' => 1
+        ]));
+
+        $this->assertResponseOk();
+
+        // Assert child comment returns 200
+        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
+            'uri' => '/path/',
+            'id' => 2
+        ]));
+
+        $this->assertResponseOk();
+
+        // Delete child comment
+        $this->runRequest(new ServerRequest([], [], '/id/2', 'DELETE'));
+
+        $this->assertResponseOk();
+
+        // Assert no comments returned for uri
+        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
+            'uri' => '/path/'
+        ]));
+
+        $this->assertResponseStatusCodeEquals(404);
+
+        // @todo self.assertNotIn('/path/', self.app.db.threads)
     }
 
     /**
