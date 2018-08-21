@@ -4,6 +4,14 @@ namespace App\Repositories;
 
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * Class Comments
+ *
+ * Port of isso python isso.db.comments and isso.db.guard as they
+ * both do actions on the comment entity.
+ * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py
+ * @see https://github.com/posativ/isso/blob/master/isso/db/spam.py
+ */
 class Comments extends EntityRepository
 {
 
@@ -204,6 +212,50 @@ class Comments extends EntityRepository
     {
         // @todo
     }
+
+    /**
+     * Undocumented.
+     *
+     * Port of isso python isso.db.guard.validate
+     * @see https://github.com/posativ/isso/blob/master/isso/db/spam.py#L14
+     * @param string $uri
+     * @param string $comment
+     */
+    public function guardValidate(string $uri, string $comment)
+    {
+        // @todo
+    }
+
+    /**
+     * Undocumented.
+     *
+     * Port of isso python isso.db.guard._limit
+     * @see https://github.com/posativ/isso/blob/master/isso/db/spam.py#L29
+     * @param string $uri
+     * @param string $comment
+     */
+    public function guardLimit(string $uri, string $comment)
+    {
+        // @todo
+    }
+
+    /**
+     * Undocumented.
+     *
+     * Port of isso python isso.db.guard._spam
+     * @see https://github.com/posativ/isso/blob/master/isso/db/spam.py#L75
+     * @param string $uri
+     * @param string $comment
+     * @return bool
+     */
+    public function guardSpam(string $uri, string $comment)
+    {
+        return true;
+    }
+
+    //
+    // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+    //
 
 
     /**

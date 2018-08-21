@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Entities\Comment;
-use App\Repositories\CommentRepository;
+use App\Repositories\Comments;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
@@ -31,7 +31,7 @@ class ApiController extends Controller
             'plain' => isset($q['plain']) ? ($q['plain'] === '1') : false,
         ], $args);
 
-        /** @var CommentRepository $repository */
+        /** @var Comments $repository */
         $repository = $this->entityManager->getRepository(Comment::class);
 
         $count = $repository->countCommentsByUri($args['uri'], 1, $args['parent']);
