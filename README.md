@@ -2,6 +2,7 @@
 <p align="center"><em>A PHP port-in-progress of the Disqus alternative <a href="https://github.com/posativ/isso">Isso</a></em></p>
 
 <p align="center">
+  <a href="https://travis-ci.org/photogabble/isso-php"><img src="https://travis-ci.org/photogabble/isso-php.svg?branch=master" alt="Build Status"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/photogabble/isso-php.svg" alt="License"></a>
 </p>
 
