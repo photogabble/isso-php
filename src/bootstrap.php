@@ -18,7 +18,7 @@ try {
 //
 // Config
 //
-$app->getContainer()->share('config', include __DIR__ . '/../config.php');
+$app->getContainer()->share('config', new \Adbar\Dot(include __DIR__ . '/../config.php'));
 
 //
 // Services
