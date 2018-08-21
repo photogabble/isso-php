@@ -36,6 +36,7 @@ class Routes extends AbstractServiceProvider implements BootableServiceProviderI
 
         $app->get('/', '\App\Http\Controllers\ApiController::getFetch');
         $app->post('/new', '\App\Http\Controllers\ApiController::postNew');
+        $app->get('/info', '\App\Http\Controllers\InfoController::show');
 
         $app->get('/count', '\App\Http\Controllers\ApiController::getCount');
         $app->post('/count', '\App\Http\Controllers\ApiController::postCount');
