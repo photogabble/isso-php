@@ -19,13 +19,13 @@ class ApiController extends Controller
      * Comment fields, that can be submitted in request.
      * @var array
      */
-    private $accept = ['text', 'author', 'website', 'email', 'parent', 'title', 'notification'];
+    static $accept = ['text', 'author', 'website', 'email', 'parent', 'title', 'notification'];
 
     /**
      * Default fields that are sent in response. (Public fields.)
      * @var array
      */
-    private $fields = ['id', 'parent', 'text', 'author', 'website', 'mode', 'created', 'modified', 'likes', 'dislikes', 'hash', 'gravatar_image', 'notification'];
+    static $fields = ['id', 'parent', 'text', 'author', 'website', 'mode', 'created', 'modified', 'likes', 'dislikes', 'hash', 'gravatar_image', 'notification'];
 
     /**
      * @var array
@@ -59,7 +59,7 @@ class ApiController extends Controller
     public function postNew(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
         $q = new Dot(array_filter($request->getQueryParams(), function($k) {
-            return in_array($k, $this->accept);
+            return in_array($k, static::$accept);
         }, ARRAY_FILTER_USE_KEY));
 
         foreach (["author", "email", "website", "parent"] as $k) {

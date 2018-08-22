@@ -2,6 +2,7 @@
 
 namespace App\Tests\Feature;
 
+use App\Http\Controllers\ApiController;
 use App\Http\Validation\Comment;
 use App\Tests\BootsApp;
 use Zend\Diactoros\ServerRequest;
@@ -612,7 +613,6 @@ class CommentTest extends BootsApp
             'uri' => '/path/'
         ]));
 
-
         $b = $this->getDecodedJsonResponse();
 
         $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
@@ -635,7 +635,20 @@ class CommentTest extends BootsApp
      */
     public function testVisibleFields()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => '...',
+            'invalid' => 'field',
+            'uri' => '/path/'
+        ]));
+        $this->assertResponseStatusCodeEquals(201);
+
+        $data = $this->getDecodedJsonResponse();
+
+        foreach (ApiController::$fields as $key) {
+            unset($data[$key]);
+        } unset ($key);
+
+        $this->assertCount(0, $data);
     }
 
     /**
