@@ -769,6 +769,12 @@ class CommentTest extends BootsApp
      */
     public function testPreview()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $this->runRequest(new ServerRequest([], [], '/preview', 'POST', 'php://input', [], [], [
+            'text' => 'This is **mark***down*'
+        ]));
+
+        $this->assertResponseOk();
+
+        $this->assertJsonResponseValueEquals('text', '<p>This is <strong>mark</strong><em>down</em></p>');
     }
 }
