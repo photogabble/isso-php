@@ -53,11 +53,10 @@ class ApiController extends Controller
      * Port of isso python isso.views.comments.fetch
      * @see https://github.com/posativ/isso/blob/master/isso/views/comments.py#L247
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function postNew(ServerRequestInterface $request, ResponseInterface $response, array $args = []): ResponseInterface
+    public function postNew(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
         $q = new Dot(array_filter($request->getQueryParams(), function($k) {
             return in_array($k, $this->accept);
@@ -134,12 +133,11 @@ class ApiController extends Controller
      * Port of isso python isso.views.comments.fetch
      * @see https://github.com/posativ/isso/blob/master/isso/views/comments.py#L247
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getFetch(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function getFetch(ServerRequestInterface $request, array $args = [])
     {
         $q = $request->getQueryParams();
 
@@ -172,11 +170,10 @@ class ApiController extends Controller
      * GET: /count
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function getCount(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function getCount(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'count']);
     }
@@ -185,11 +182,10 @@ class ApiController extends Controller
      * POST: /count
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function postCount(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function postCount(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'counts']);
     }
@@ -198,11 +194,10 @@ class ApiController extends Controller
      * GET: /feed
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function getFeed(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function getFeed(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'feed']);
     }
@@ -211,11 +206,10 @@ class ApiController extends Controller
      * GET: /id/<int:id>
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function getView(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function getView(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'view', 'id' => (int) $args['id']]);
     }
@@ -223,11 +217,10 @@ class ApiController extends Controller
     /**
      * PUT: /id/<int:id>
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function putEdit(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function putEdit(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'edit', 'id' => (int) $args['id']]);
     }
@@ -236,11 +229,10 @@ class ApiController extends Controller
      * DELETE: /id/<int:id>
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function deleteDelete(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function deleteDelete(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'delete', 'id' => (int) $args['id']]);
     }
@@ -249,11 +241,10 @@ class ApiController extends Controller
      * GET: /id/<int:id>/<any(edit,activate,delete):action>/<string:key>
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function getModerate(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function getModerate(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'getModerate', 'id' => (int) $args['id'], 'action' => $args['action'], 'key' => $args['key']]);
     }
@@ -261,11 +252,10 @@ class ApiController extends Controller
     /**
      * POST: /id/<int:id>/<any(edit,activate,delete):action>/<string:key>
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function postModerate(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function postModerate(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'postModerate', 'id' => (int) $args['id'], 'action' => $args['action'], 'key' => $args['key']]);
     }
@@ -274,11 +264,10 @@ class ApiController extends Controller
      * POST: /id/<int:id>/like
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function postLike(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function postLike(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'like', 'id' => (int) $args['id']]);
     }
@@ -286,11 +275,10 @@ class ApiController extends Controller
     /**
      * POST: /id/<int:id>/dislike
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function postDislike(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function postDislike(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'dislike', 'id' => (int) $args['id']]);
     }
@@ -298,11 +286,10 @@ class ApiController extends Controller
     /**
      * GET: /demo
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function getDemo(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function getDemo(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'demo']);
     }
@@ -311,11 +298,10 @@ class ApiController extends Controller
      * POST: /preview
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function postPreview(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function postPreview(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'preview']);
     }
@@ -324,11 +310,10 @@ class ApiController extends Controller
      * POST: /login
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function postLogin(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function postLogin(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'login']);
     }
@@ -337,11 +322,10 @@ class ApiController extends Controller
      * GET: /admin
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function getAdmin(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function getAdmin(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse(['msg' => 'admin']);
     }

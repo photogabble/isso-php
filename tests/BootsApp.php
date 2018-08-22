@@ -31,7 +31,8 @@ class BootsApp extends TestCase
         $e = new TestEmitter();
         $this->emitter = $e;
         $this->app = include __DIR__ . '/../src/bootstrap.php';
-        $this->app->getContainer()->share('emitter', function () use ($e) {
+
+        $this->app->getContainer()->extend('emitter')->setConcrete(function () use ($e) {
             return $e;
         });
     }
