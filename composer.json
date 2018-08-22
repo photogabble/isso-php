@@ -5,7 +5,7 @@
   "require": {
     "php": ">=7.1",
     "ext-json": "*",
-    "photogabble/tuppence": "^1.1",
+    "photogabble/tuppence": "dev-master",
     "doctrine/dbal": "^2.5",
     "doctrine/orm": "^2.5",
     "symfony/console": "^4.1",
@@ -30,5 +30,6 @@
       "name": "Simon Dann",
       "email": "simon.dann@gmail.com"
     }
-  ]
+  ],
+  "minimum-stability": "dev"
 }
