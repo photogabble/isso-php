@@ -17,6 +17,11 @@ use Zend\Diactoros\Response\JsonResponse;
 class InfoController extends Controller
 {
 
+    /**
+     * Is moderation enabled?
+     *
+     * @var bool
+     */
     private $moderation;
 
     public function __construct(EntityManagerInterface $entityManager, App $app)
@@ -39,11 +44,10 @@ class InfoController extends Controller
      *
      * @see https://github.com/posativ/isso/blob/master/isso/views/__init__.py#L51-L66
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      * @return JsonResponse
      */
-    public function show(ServerRequestInterface $request, ResponseInterface $response, array $args = [])
+    public function show(ServerRequestInterface $request, array $args = [])
     {
         return new JsonResponse([
             'origin' => (string) $request->getUri()->withPath(''),
