@@ -3,6 +3,7 @@
 namespace App\Tests\Feature;
 
 use App\Tests\BootsApp;
+use App\Utils\Hasher;
 
 class HashTest extends BootsApp
 {
@@ -13,7 +14,14 @@ class HashTest extends BootsApp
      */
     public function testHash()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $hasher = new Hasher('world');
+        $this->assertEquals(md5('helloworld'), $hasher->hash('hello'));
+
+        $hasher = new Hasher('world', 'sha1');
+        $this->assertEquals(sha1('helloworld'), $hasher->hash('hello'));
+
+        $this->expectExceptionMessage('Hash algorithm [abc] is not supported by your version of PHP.');
+        new Hasher('world','abc');
     }
 
     /**
@@ -23,7 +31,7 @@ class HashTest extends BootsApp
      */
     public function testUHash()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $this->markTestSkipped('Not yet implemented; not sure if it needs porting.'); // @todo not sure if this needs porting...
     }
 
     /**
@@ -31,9 +39,10 @@ class HashTest extends BootsApp
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_utils_hash.py#L35
      * @throws \Exception
      */
-    public function TestPBKDF2Default()
+    public function testPBKDF2Default()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $hasher = new Hasher('world', 'pbkdf2');
+        $this->assertEquals('3ad933085ca0', $hasher->hash(''));
     }
 
     /**
@@ -41,9 +50,12 @@ class HashTest extends BootsApp
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_utils_hash.py#L40
      * @throws \Exception
      */
-    public function TestPBKDF2DifferentSalt()
+    public function testPBKDF2DifferentSalt()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $a = new Hasher('hello', 'pbkdf2');
+        $b = new Hasher('world', 'pbkdf2');
+
+        $this->assertNotEquals($a->hash('...'), $b->hash('...'));
     }
 
     /**
@@ -53,6 +65,10 @@ class HashTest extends BootsApp
      */
     public function testCustom()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $hasher = new Hasher('hello', 'pbkdf2:1000:2:md5');
+        $this->assertEquals(2, strlen($hasher->hash('...')));
+
+        $hasher = new Hasher('hello', 'pbkdf2:1000:64:sha1');
+        $this->assertEquals(64, strlen($hasher->hash('...')));
     }
 }
