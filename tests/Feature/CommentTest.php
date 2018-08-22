@@ -658,7 +658,10 @@ class CommentTest extends BootsApp
      */
     public function testNoFeed()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $this->runRequest(new ServerRequest([], [], '/feed', 'POST', 'php://input', [], [], [
+            'uri' => '/path/nothing/'
+        ]));
+        $this->assertResponseStatusCodeEquals(404);
     }
 
     /**
