@@ -492,13 +492,64 @@ class CommentTest extends BootsApp
     }
 
     /**
+     * [ comment 1 ]
+     * |
+     * --- [ comment 2, ref 1 ]
+     * |
+     * --- [ comment 3, ref 1 ]
+     * [ comment 4 ]
+     *
      * Port of isso python testDeleteWithMultipleReferences
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L249
      * @throws \Exception
      */
     public function testDeleteWithMultipleReferences()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => 'First',
+            'uri' => '/path/'
+        ]));
+
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => 'Second',
+            'parent' => 1,
+            'uri' => '/path/'
+        ]));
+
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => 'Third',
+            'parent' => 1,
+            'uri' => '/path/'
+        ]));
+
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => 'Last',
+            'uri' => '/path/'
+        ]));
+
+        $this->runRequest(new ServerRequest([], [], '/id/1', 'DELETE'));
+        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
+            'uri' => '/path/'
+        ]));
+        $this->assertResponseOk();
+
+        $this->runRequest(new ServerRequest([], [], '/id/2', 'DELETE'));
+        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
+            'uri' => '/path/'
+        ]));
+        $this->assertResponseOk();
+
+        $this->runRequest(new ServerRequest([], [], '/id/3', 'DELETE'));
+        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
+            'uri' => '/path/'
+        ]));
+        $this->assertResponseOk();
+
+        $this->runRequest(new ServerRequest([], [], '/id/4', 'DELETE'));
+        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
+            'uri' => '/path/'
+        ]));
+        $this->assertResponseStatusCodeEquals(404);
     }
 
     /**
