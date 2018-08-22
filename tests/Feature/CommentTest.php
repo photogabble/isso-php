@@ -564,14 +564,23 @@ class CommentTest extends BootsApp
         foreach ($paths as $path)
         {
             $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
-                'text' => 'Lorem ipsum ...',
-                'uri' => '/path/'
+                'text' => '...',
+                'uri' => $path
             ]));
 
             $this->assertResponseStatusCodeEquals(201);
         }
 
-        $this->markTestIncomplete('Not yet implemented.');
+        foreach ($paths as $i => $path)
+        {
+            $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
+                'uri' => $path
+            ]));
+            $this->assertResponseOk();
+
+            $this->runRequest(new ServerRequest([], [], '/'.($i+1), 'GET'));
+            $this->assertResponseOk();
+        }
     }
 
     /**
@@ -591,7 +600,32 @@ class CommentTest extends BootsApp
      */
     public function testHash()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => 'Aaa...',
+            'uri' => '/path/'
+        ]));
+
+        $a = $this->getDecodedJsonResponse();
+
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => 'Bbb...',
+            'uri' => '/path/'
+        ]));
+
+
+        $b = $this->getDecodedJsonResponse();
+
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'text' => 'Ccc...',
+            'email' => '...',
+            'uri' => '/path/'
+        ]));
+
+        $c = $this->getDecodedJsonResponse();
+
+        $this->assertNotEquals('192.168.1.1', $a['hash']);
+        $this->assertEqual($a['hash'], $b['hash']);
+        $this->assertNotEquals($a['hash'], $c['hash']);
     }
 
     /**
