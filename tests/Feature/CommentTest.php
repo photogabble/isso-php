@@ -711,7 +711,26 @@ class CommentTest extends BootsApp
      */
     public function testModify()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'uri' => 'test',
+            'text' => 'Ypyo'
+        ]));
+
+        $this->runRequest(new ServerRequest([], [], '/new', 'PUT', 'php://input', [], [], [
+            'uri' => 'test',
+            'text' => 'Tyop'
+        ]));
+
+        $this->runRequest(new ServerRequest([], [], '/id/1', 'GET'));
+        $this->assertJsonResponseValueEquals('text', '<p>Tyop</p>');
+
+        $this->runRequest(new ServerRequest([], [], '/new', 'PUT', 'php://input', [], [], [
+            'uri' => 'test',
+            'text' => 'Typo'
+        ]));
+
+        $this->runRequest(new ServerRequest([], [], '/id/1', 'GET'));
+        $this->assertJsonResponseValueEquals('text', '<p>Typo</p>');
     }
 
     /**
