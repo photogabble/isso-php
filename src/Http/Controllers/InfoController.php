@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use Adbar\Dot;
 use Doctrine\ORM\EntityManagerInterface;
 use Photogabble\Tuppence\App;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
 
