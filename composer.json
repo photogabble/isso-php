@@ -3,7 +3,7 @@
   "description": "A PHP port of the Disqus alternative Isso",
   "type": "project",
   "require": {
-    "php": ">=7.0",
+    "php": ">=7.1",
     "ext-json": "*",
     "photogabble/tuppence": "^1.1",
     "doctrine/dbal": "^2.5",
