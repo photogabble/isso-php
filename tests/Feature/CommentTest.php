@@ -740,7 +740,16 @@ class CommentTest extends BootsApp
      */
     public function testDeleteCommentRemovesThread()
     {
-        $this->markTestIncomplete('Not yet implemented.');
+        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            'uri' => 'test',
+            'text' => '...'
+        ]));
+
+        // @todo self.assertIn('/', self.app.db.threads)
+
+        $this->runRequest(new ServerRequest([], [], '/id/1', 'DELETE'));
+
+        // @todo self.assertNotIn('/', self.app.db.threads)
     }
 
     /**
