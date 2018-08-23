@@ -62,9 +62,13 @@ class ApiController extends Controller
             return in_array($k, static::$accept);
         }, ARRAY_FILTER_USE_KEY));
 
+        if (!$q->has('uri')){
+            return new EmptyResponse(400);
+        }
+
         foreach (["author", "email", "website", "parent"] as $k) {
             if (!$q->has($k)){
-                $q->set($k, '');
+                $q->set($k, (($k === 'parent') ? null : ''));
             }
         }
 
