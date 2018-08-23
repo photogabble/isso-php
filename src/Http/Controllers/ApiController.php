@@ -37,7 +37,18 @@ class ApiController extends Controller
      */
     private $moderation;
 
-    public function __construct(EntityManagerInterface $entityManager, App $app)
+    /**
+     * @var ClientInterface
+     */
+    private $guzzle;
+
+    /**
+     * ApiController constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param ClientInterface $guzzle
+     * @param App $app
+     */
+    public function __construct(EntityManagerInterface $entityManager, ClientInterface $guzzle, App $app)
     {
         parent::__construct($entityManager, $app);
 
@@ -45,6 +56,7 @@ class ApiController extends Controller
         $config = $app->getContainer()->get('config');
         $this->moderation = $config->get('moderation.enabled', true);
         $this->configuration = new Dot($config->get('general', []));
+        $this->guzzle = $guzzle;
     }
 
     /**
