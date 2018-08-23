@@ -2,6 +2,9 @@
 
 namespace App\Tests;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\ORM\Tools\ToolsException;
 use Photogabble\Tuppence\App;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -32,10 +35,29 @@ class BootsApp extends TestCase
         $this->emitter = $e;
         $this->app = include __DIR__ . '/../src/bootstrap.php';
         $this->app->getContainer()->get('config')->set('database.path', ':memory:');
-
         $this->app->getContainer()->extend('emitter')->setConcrete(function () use ($e) {
             return $e;
         });
+    }
+
+    protected function setUp()
+    {
+        $this->bootApp();
+        $this->runDatabaseMigrations();
+    }
+
+    protected function runDatabaseMigrations()
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->app->getContainer()->get(EntityManagerInterface::class);
+        $tool = new SchemaTool($em);
+        $tool->dropDatabase();
+
+        try {
+            $tool->createSchema($em->getMetadataFactory()->getAllMetadata());
+        } catch (ToolsException $e) {
+            $this->fail($e->getMessage());
+        }
     }
 
     /**
@@ -46,7 +68,7 @@ class BootsApp extends TestCase
     protected function runRequest(ServerRequest $request)
     {
         $this->decodedJson = null;
-        $this->bootApp();
+        //$this->bootApp();
         $this->app->run($request);
         $this->lastRequest = $this->emitter->getResponse();
         return $this->lastRequest;
