@@ -28,9 +28,10 @@ class Threads extends EntityRepository
      * @param string $uri
      * @return Thread
      */
-    public function getThreadByUri(string $uri): Thread
+    public function getThreadByUri(string $uri): ?Thread
     {
         // @todo
+        return null;
     }
 
     /**

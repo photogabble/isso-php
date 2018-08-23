@@ -7,9 +7,12 @@ use App\Entities\Thread;
 use App\Repositories\Comments;
 use App\Repositories\Threads;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
 use Photogabble\Tuppence\App;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
 class ApiController extends Controller
@@ -19,7 +22,7 @@ class ApiController extends Controller
      * Comment fields, that can be submitted in request.
      * @var array
      */
-    static $accept = ['text', 'author', 'website', 'email', 'parent', 'title', 'notification'];
+    static $accept = ['text', 'author', 'website', 'email', 'parent', 'title', 'notification', 'uri'];
 
     /**
      * Default fields that are sent in response. (Public fields.)
@@ -105,12 +108,23 @@ class ApiController extends Controller
         /** @var Threads $threads */
         $threads = $this->entityManager->getRepository(Thread::class);
 
-
-        if ($threads->contains($q->get('uri'))) {
-            $thread = $threads->getThreadByUri($q->get('uri'));
-        } else {
+        // If thread record doesn't already exist, create one from the title param, or Referer if title isn't set.
+        if (! $thread = $threads->getThreadByUri($q->get('uri'))){
             // If title not set then attempt to parse the title of the referring url
             if (! $q->has('title')) {
+                $origin = origin($request->getHeaderLine('Referer'));
+
+                try {
+                    $response = $this->guzzle->request('GET', $origin);
+                } catch (GuzzleException $e) {
+                    return new EmptyResponse(404);
+                }
+
+                $title = parseTitleFromHTML($response->getBody());
+
+
+
+                $n = 1;
                 // @todo https://github.com/posativ/isso/blob/master/isso/views/comments.py#L271-L285
             }
 
@@ -119,6 +133,8 @@ class ApiController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse(['error' => 'Database error'],  500);
             }
+
+            $n = 1;
 
         }
 
