@@ -25,7 +25,7 @@ class Console extends AbstractServiceProvider
     public function register()
     {
         $this->getContainer()->add(Application::class, function(){
-            $application = new Application('Unwrappathon-2017', '1.0.0');
+            $application = new Application('isso-php', '1.0.0');
 
             $commands = [
                 new SeedCommand(),
