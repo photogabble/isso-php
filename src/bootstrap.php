@@ -6,6 +6,11 @@ if(! defined('APP_ROOT')) {
 
 include APP_ROOT . '/vendor/autoload.php';
 
+if (file_exists(APP_ROOT . DIRECTORY_SEPARATOR . '.env')) {
+    $env = new Dotenv\Dotenv(__DIR__);
+    $env->load();
+}
+
 $app = new \Photogabble\Tuppence\App();
 
 try {
