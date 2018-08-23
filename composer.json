@@ -2,6 +2,13 @@
   "name": "photogabble/isso-php",
   "description": "A PHP port of the Disqus alternative Isso",
   "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Simon Dann",
+      "email": "simon.dann@gmail.com"
+    }
+  ],
   "require": {
     "php": ">=7.1",
     "ext-json": "*",
@@ -25,13 +32,10 @@
       "App\\Tests\\": "tests"
     }
   },
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Simon Dann",
-      "email": "simon.dann@gmail.com"
-    }
-  ],
+  "scripts": {
+    "install-sami": "curl -O http://get.sensiolabs.org/sami.phar",
+    "regen-docs": "@php sami.phar update sami-config.php"
+  },
   "minimum-stability": "dev",
   "prefer-stable": true
 }

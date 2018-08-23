@@ -1,2 +1,5 @@
+.idea
+.sami
 /vendor/
 composer.lock
+sami.phar
