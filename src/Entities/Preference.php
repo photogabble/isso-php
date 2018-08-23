@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 /**
+ * @see \App\Repositories\Preferences
  * @Entity
  * @Table(name="preferences")
  * @Entity(repositoryClass="App\Repositories\Preferences")

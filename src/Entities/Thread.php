@@ -5,6 +5,7 @@ namespace App\Entities;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * @see \App\Repositories\Threads
  * @Entity
  * @Table(name="threads")
  * @Entity(repositoryClass="App\Repositories\Threads")

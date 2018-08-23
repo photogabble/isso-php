@@ -5,15 +5,27 @@ use App\Http\JsonFormat;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * @see \App\Repositories\Comments
  * @Entity
  * @Table(name="comments")
  * @Entity(repositoryClass="App\Repositories\Comments")
  */
 class Comment
 {
-
+    /**
+     * Comment flagged as valid.
+     */
     const MODE_VALID = 1;
+
+    /**
+     * Comment flagged as pending moderation.
+     */
     const MODE_PENDING = 2;
+
+    /**
+     * Comment flagged as soft delete - it has been
+     * deleted but has child comments attached.
+     */
     const MODE_SOFT_DELETED = 4;
 
     /**
