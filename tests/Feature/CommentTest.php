@@ -16,17 +16,15 @@ class CommentTest extends BootsApp
      */
     public function testGet()
     {
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
-            'text' => 'Lorem ipsum ...',
-            'uri' => 'path'
-        ]));
+        $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
+            'text' => 'Lorem ipsum ...'
+        ]);
 
         $this->assertResponseStatusCodeEquals(201);
         $this->assertJsonResponse();
         $this->assertJsonResponseValueEquals('id', 1);
 
-        $this->runRequest(new ServerRequest([], [], '/id/1', 'GET'));
-
+        $this->makeRequest('GET', '/id/1');
         $this->assertResponseOk();
         $this->assertJsonResponse();
         $this->assertJsonResponseValueEquals('id', 1);

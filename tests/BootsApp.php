@@ -61,6 +61,7 @@ class BootsApp extends TestCase
     }
 
     /**
+     * @deprecated rename runServerRequest
      * @param ServerRequest $request
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \Exception
@@ -72,6 +73,46 @@ class BootsApp extends TestCase
         $this->app->run($request);
         $this->lastRequest = $this->emitter->getResponse();
         return $this->lastRequest;
+    }
+
+    /**
+     * @param ServerRequest $request
+     * @return ResponseInterface
+     * @throws \Exception
+     */
+    protected function runServerRequest(ServerRequest $request): ResponseInterface
+    {
+        $this->decodedJson = $this->lastRequest = null;
+        $this->app->run($request);
+        $this->lastRequest = $this->emitter->getResponse();
+        return $this->lastRequest;
+    }
+
+    /**
+     * @todo rename to runRequest
+     * @param string $method
+     * @param string $uri
+     * @param array $queryParams
+     * @param array $headers
+     * @param array $cookies
+     * @return ResponseInterface
+     * @throws \Exception
+     */
+    protected function makeRequest(string $method, string $uri, array $queryParams = [], array $headers = [], array $cookies = []): ResponseInterface
+    {
+        $headers = array_merge([
+            'Referer' => 'http://dev.local'
+        ], $headers);
+
+        // @todo set Referer header for testing environment
+
+        $parts = parse_url($uri);
+        $parts['query'] = (isset($parts['query']) ? $parts['query'] : '');
+        parse_str($parts['query'], $query);
+        $queryParams = array_merge($query, $queryParams);
+        $request = new ServerRequest([], [], $parts['path'], $method, 'php://input', $headers, $cookies, $queryParams);
+
+        return $this->runServerRequest($request);
     }
 
     protected function assertResponseOk()
