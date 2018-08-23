@@ -42,13 +42,14 @@ if (!function_exists('origin')) {
 
         return $url;
     }
-
 }
 
 if (!function_exists('parseTitleFromHTML')) {
-    function parseTitleFromHTML (string $html): string
+    function parseTitleFromHTML(string $html): string
     {
-        if (empty($html)){ return 'Untitled'; }
+        if (empty($html)) {
+            return 'Untitled';
+        }
 
         libxml_use_internal_errors(true);
         $dom = new \DOMDocument();
@@ -56,14 +57,14 @@ if (!function_exists('parseTitleFromHTML')) {
         $xpath = new DOMXPath($dom);
         libxml_clear_errors();
 
-        if ($title = $xpath->query('//*[@id="isso-thread"]/@data-title')){
-            if ($title->count() > 0 && $found = $title->item(0)->nodeValue){
+        if ($title = $xpath->query('//*[@id="isso-thread"]/@data-title')) {
+            if ($title->count() > 0 && $found = $title->item(0)->nodeValue) {
                 return $found;
             }
         }
 
         $title = $xpath->query('//title');
-        if ($title->count() > 0 && $found = $title->item(0)->textContent){
+        if ($title->count() > 0 && $found = $title->item(0)->textContent) {
             return $found;
         }
 
