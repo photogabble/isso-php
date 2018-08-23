@@ -5,9 +5,11 @@ namespace App\Tests;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\ToolsException;
+use GuzzleHttp\ClientInterface;
 use Photogabble\Tuppence\App;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 
@@ -37,6 +39,12 @@ class BootsApp extends TestCase
         $this->app->getContainer()->get('config')->set('database.path', ':memory:');
         $this->app->getContainer()->extend('emitter')->setConcrete(function () use ($e) {
             return $e;
+        });
+        $this->app->getContainer()->extend(ClientInterface::class)->setConcrete(function(){
+            $stub = $this->createMock(ClientInterface::class);
+            $stub->method('request')
+                ->willReturn(new HtmlResponse('<html><head><title>PHP-ISSO Unit Test</title></head><body id="isso-thread" data-title="Foo!">Hello World!</body></html>'));
+            return $stub;
         });
     }
 
