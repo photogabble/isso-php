@@ -66,7 +66,27 @@ class Guard
      */
     private function checkLimit(string $uri, $comment): bool
     {
+        // block more than :param:`ratelimit` comments per minute
 
+        // @todo
+
+        // block more than three comments as direct response to the post
+
+        // @todo
+
+        // block replies to self unless :param:`reply-to-self` is enabled
+
+        // @todo
+
+        // require email if :param:`require-email` is enabled
+
+        // @todo
+
+        // require author if :param:`require-author` is enabled
+
+        // @todo
+
+        return true;
     }
 
     /**
