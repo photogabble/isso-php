@@ -6,6 +6,7 @@ use App\Entities\Comment;
 use App\Entities\Thread;
 use App\Repositories\Comments;
 use App\Repositories\Threads;
+use App\Utils\Guard;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -46,12 +47,18 @@ class ApiController extends Controller
     private $guzzle;
 
     /**
+     * @var Guard
+     */
+    private $guard;
+
+    /**
      * ApiController constructor.
      * @param EntityManagerInterface $entityManager
      * @param ClientInterface $guzzle
+     * @param Guard $guard
      * @param App $app
      */
-    public function __construct(EntityManagerInterface $entityManager, ClientInterface $guzzle, App $app)
+    public function __construct(EntityManagerInterface $entityManager, ClientInterface $guzzle, Guard $guard, App $app)
     {
         parent::__construct($entityManager, $app);
 
@@ -60,6 +67,7 @@ class ApiController extends Controller
         $this->moderation = $config->get('moderation.enabled', true);
         $this->configuration = new Dot($config->get('general', []));
         $this->guzzle = $guzzle;
+        $this->guard = $guard;
     }
 
     /**
@@ -113,29 +121,29 @@ class ApiController extends Controller
             // If title not set then attempt to parse the title of the referring url
             if (! $q->has('title')) {
                 $origin = origin($request->getHeaderLine('Referer'));
-
                 try {
                     $response = $this->guzzle->request('GET', $origin);
                 } catch (GuzzleException $e) {
                     return new EmptyResponse(404);
                 }
-
-                $title = parseTitleFromHTML($response->getBody());
-
-
-
-                $n = 1;
-                // @todo https://github.com/posativ/isso/blob/master/isso/views/comments.py#L271-L285
+                $q->set('title', parseTitleFromHTML($response->getBody()));
             }
 
             try{
                 $thread = $threads->new($q->get('uri'), $q->get('title'));
+
+                // @todo #14: emit comments.new:new-thread event
+
             } catch (\Exception $e) {
                 return new JsonResponse(['error' => 'Database error'],  500);
             }
 
-            $n = 1;
+            // @todo #14: emit comments.new:before-save event
 
+
+            $this->guard->validate($q->get('uri'), $q->all());
+
+            $n = 1;
         }
 
         // @todo finish me

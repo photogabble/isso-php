@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -227,16 +228,74 @@ class Comments extends EntityRepository
     }
 
     /**
-     * Undocumented.
+     * Returns count of comments authored by remote address
+     * in the past 60 seconds.
      *
-     * Port of isso python isso.db.guard._limit
-     * @see https://github.com/posativ/isso/blob/master/isso/db/spam.py#L29
-     * @param string $uri
-     * @param string $comment
+     * @param array $comment
+     * @throws \Doctrine\DBAL\DBALException
+     * @return int
      */
-    public function guardLimit(string $uri, string $comment)
+    public function countAuthoredByRemoteAddressInPastMinute(array $comment): int
     {
-        // @todo
+        $query = $this->getEntityManager()
+            ->getConnection()
+            ->prepare('SELECT COUNT(id) FROM comments WHERE remote_addr = :remote_addr AND :time - created < 60');
+
+        $query->execute([
+            'remote_addr' => $comment['remote_addr'],
+            'time' => time()
+        ]);
+
+        return (int) $query->fetch()['COUNT(id)'];
+    }
+
+    /**
+     * Returns count of direct comments authored by remote address
+     * on a post.
+     *
+     * @param array $comment
+     * @return int
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function countAuthoredDirectResponseByRemoteAddress(array $comment): int
+    {
+        $query = $this->getEntityManager()
+            ->getConnection()
+            ->prepare('SELECT COUNT(id) FROM comments WHERE tid = (SELECT id FROM threads WHERE uri = :uri) AND remote_addr = :remote_addr AND parent IS NULL');
+
+        $query->execute([
+            'uri' => $comment['uri'],
+            'remote_addr' => $comment['remote_addr']
+        ]);
+
+        return (int) $query->fetch()['COUNT(id)'];
+    }
+
+    /**
+     * Used by Guard to block users from replying to their own
+     * comments if reply-to-self is disabled and the parent
+     * comment is still open for editing.
+     *
+     * @param array $comment
+     * @param int $maxAge
+     * @return bool
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function isAuthorsParentStillOpenForEditing(array $comment, int $maxAge): bool
+    {
+        $query = $this->getEntityManager()
+            ->getConnection()
+            ->prepare('SELECT id FROM comments WHERE remote_addr = :remote_addr AND id = :id AND :time - created < :max_age');
+
+        $query->execute([
+            'remote_addr' => $comment['remote_addr'],
+            'id' => $comment['parent'],
+            'time' => time(),
+            'max_age' => $maxAge
+
+        ]);
+
+        return (int)$query->fetch()['COUNT(id)'] === 0;
     }
 
     /**
