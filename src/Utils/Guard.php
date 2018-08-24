@@ -43,10 +43,7 @@ class Guard
      */
     public function __construct(EntityManagerInterface $entityManager, Dot $configuration)
     {
-        if (! $this->maxTime = strtotime($configuration->get('general.max-age', '15m')))
-        {
-            throw new \Exception(sprintf('The configuration for general.max-age is invalid.'));
-        }
+        $this->maxTime = parseStringToTime($configuration->get('general.max-age', '15m'));
 
         if (! $maxAge = strtotime($configuration->get('general.max-time', '15m')))
         $this->configuration = $configuration->get('guard');

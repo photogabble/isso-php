@@ -90,3 +90,46 @@ if (!function_exists('parseTitleFromHTML')) {
         return 'Untitled';
     }
 }
+
+if (! function_exists('parseStringToTime')) {
+
+    /**
+     * Parse the input $string and return as time in seconds.
+     * It supports years, weeks, days, hours, minutes, seconds.
+     *
+     * e.g. 3h45m12s equals to 3 hours, 45 minutes and 12 seconds
+     * and will result in a return value equal to 13512.
+     *
+     * @param string $str
+     * @return int
+     */
+    function parseStringToTime(string $str): int {
+        $multipliers = [
+            's' => 1,
+            'm' => 60,
+            'h' => 3600,
+            'd' => 86400,
+            'w' => 604800,
+            'y' => 31536000
+        ];
+
+        $total = 0;
+        $number = '';
+        for ($i = 0; $i < strlen($str); $i++){
+            $s = $str[$i];
+            if (strpos('0123456789smhdwy', $s) === false) {
+                continue;
+            }
+
+            if (strpos('0123456789', $s) !== false) {
+                $number .= $s;
+                continue;
+            }
+            if (in_array($s, array_keys($multipliers))){
+                $total += ($multipliers[$s] * (int) $number);
+                $number = '';
+            }
+        }
+        return $total;
+    }
+}
