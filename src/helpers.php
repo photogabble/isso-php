@@ -45,6 +45,14 @@ if (!function_exists('origin')) {
 }
 
 if (!function_exists('parseTitleFromHTML')) {
+    /**
+     * Extract <h1> title from web page. The title is *probably* the text node,
+     * which is the nearest H1 node in context to an element with the `isso-thread` id.
+     *
+     * @see https://github.com/posativ/isso/blob/5bc176d85b64eac331f578d0657ac26be40b2470/isso/utils/parse.py#L21
+     * @param string $html
+     * @return string
+     */
     function parseTitleFromHTML(string $html): string
     {
         if (empty($html)) {
@@ -57,17 +65,28 @@ if (!function_exists('parseTitleFromHTML')) {
         $xpath = new DOMXPath($dom);
         libxml_clear_errors();
 
+        // If the data-title attribute is set use its value
         if ($title = $xpath->query('//*[@id="isso-thread"]/@data-title')) {
             if ($title->count() > 0 && $found = $title->item(0)->nodeValue) {
                 return $found;
             }
         }
 
+        // If the isso-thread id exists but without the data-title attribute attempt to find the nearest H1 preceding it
+        if ($title = $xpath->query('//*[@id="isso-thread"]/preceding::*[self::h1 or self::h2][1]')) {
+            if ($title->count() > 0 && $found = $title->item(0)->textContent)
+            {
+                return $found;
+            }
+        }
+
+        // If else, try to use the page title.
         $title = $xpath->query('//title');
         if ($title->count() > 0 && $found = $title->item(0)->textContent) {
             return $found;
         }
 
+        // Really?
         return 'Untitled';
     }
 }
