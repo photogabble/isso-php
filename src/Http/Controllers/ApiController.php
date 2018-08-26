@@ -15,6 +15,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Response\TextResponse;
 
 class ApiController extends Controller
 {
@@ -78,6 +79,7 @@ class ApiController extends Controller
      * @param ServerRequestInterface $request
      * @param array $args
      * @return JsonResponse
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function postNew(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
@@ -135,13 +137,20 @@ class ApiController extends Controller
                 // @todo #14: emit comments.new:new-thread event
 
             } catch (\Exception $e) {
-                return new JsonResponse(['error' => 'Database error'],  500);
+                return new TextResponse('Database error',  500);
             }
 
             // @todo #14: emit comments.new:before-save event
 
+            if (! $this->guard->validate($q->get('uri'), $q->all())) {
+                // @todo #14: emit comments.new:guard event
+                return new TextResponse($this->guard->getError(), 403);
+            }
 
-            $this->guard->validate($q->get('uri'), $q->all());
+            /** @var Comments $comments */
+            $comments = $this->entityManager->getRepository(Comment::class);
+
+            $rv = $comments->add($q->get('uri'), $q->all());
 
             $n = 1;
         }

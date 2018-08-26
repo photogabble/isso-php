@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Entities\Comment;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\EntityRepository;
 
@@ -24,9 +25,20 @@ class Comments extends EntityRepository
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L43
      * @param string $uri
      * @param $c
+     * @throws \Doctrine\ORM\ORMException
      */
     public function add(string $uri, array $c)
     {
+        $entity = new Comment();
+
+        if (! is_null($c['parent'])) {
+            $parent = $this->get($c['parent']);
+        }
+        $n = 1;
+
+
+        $this->getEntityManager()->persist($entity);
+
         // @todo
     }
 

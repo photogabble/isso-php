@@ -46,7 +46,7 @@ class Guard
         $this->maxTime = parseStringToTime($configuration->get('general.max-age', '15m'));
 
         if (! $maxAge = strtotime($configuration->get('general.max-time', '15m')))
-        $this->configuration = $configuration->get('guard');
+        $this->configuration = new Dot($configuration->get('guard'));
         $this->entityManager = $entityManager;
     }
 
@@ -144,6 +144,14 @@ class Guard
     private function checkSpam(string $uri, $comment): bool
     {
         return true;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getError(): ?string
+    {
+        return $this->error;
     }
 
 }
