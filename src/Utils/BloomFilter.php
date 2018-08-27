@@ -42,7 +42,9 @@ class BloomFilter
         $k = (int)ceil($m / $this->max * log(2));
 
         $this->filter = new \RocketLabs\BloomFilter\BloomFilter(new BitString(), $m, $k, ['Murmur']);
-        $this->filter->addBulk($iterable);
+        if (count($iterable) > 0) {
+            $this->filter->addBulk($iterable);
+        }
     }
 
     /**

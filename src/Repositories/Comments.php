@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Entities\Comment;
-use Doctrine\DBAL\Driver\Statement;
+use App\Entities\Thread;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -23,23 +23,33 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.add
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L43
-     * @param string $uri
-     * @param $c
+     * @param Thread $thread
+     * @param array $c
+     * @return Comment
      * @throws \Doctrine\ORM\ORMException
      */
-    public function add(string $uri, array $c)
+    public function add(Thread $thread, array $c)
     {
         $entity = new Comment();
+        $entity->setThread($thread);
 
-        if (! is_null($c['parent'])) {
-            $parent = $this->get($c['parent']);
+        if (! is_null($c['parent']) && $parent = $this->get($c['parent'])) {
+            $entity->setParent($parent);
         }
-        $n = 1;
 
+        $entity->setCreated(isset($c['created'])? $c['created'] : time());
+        $entity->setMode($c['mode']);
+        $entity->setRemoteAddr($c['remote_addr']);
+        $entity->setText($c['text']);
+        $entity->setAuthor($c['author']);
+        $entity->setEmail($c['email']);
+        $entity->setWebsite($c['website']);
+        $entity->setNotification($c['notification']);
+        $entity->setVoters();
 
         $this->getEntityManager()->persist($entity);
 
-        // @todo
+        return $entity;
     }
 
     /**
@@ -88,8 +98,9 @@ class Comments extends EntityRepository
      * Port of isso python isso.db.comments.get
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L106
      * @param int $id
+     * @return Comment|null
      */
-    public function get(int $id)
+    public function get(int $id): ?Comment
     {
         // @todo
     }

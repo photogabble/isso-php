@@ -2,6 +2,7 @@
 
 namespace App\Entities;
 use App\Http\JsonFormat;
+use App\Utils\BloomFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -127,10 +128,16 @@ class Comment
     private $dislikes = 0;
 
     /**
-     * @var string
+     * @var BloomFilter
      * @Column(type="blob")
      */
     private $voters = '';
+
+    /**
+     * @var boolean
+     * @Column(type="boolean")
+     */
+    private $notification;
 
     public function __construct() {
         $this->replies = new ArrayCollection();
@@ -241,11 +248,27 @@ class Comment
     }
 
     /**
-     * @param int $voters
+     * @param BloomFilter $voters
      */
-    public function setVoters(int $voters): void
+    public function setVoters(BloomFilter $voters = null): void
     {
-        $this->voters = $voters;
+        if (is_null($voters)){
+            $voters =  new BloomFilter();
+        }
+        $this->voters = serialize($voters);
+    }
+
+    /**
+     * @return BloomFilter
+     */
+    public function getVoters(): BloomFilter
+    {
+        $value = unserialize($this->voters);
+        if (! $value instanceof BloomFilter) {
+            $value = new BloomFilter();
+        }
+
+        return $value;
     }
 
     public function toJsonFormat(): JsonFormat
@@ -263,5 +286,21 @@ class Comment
         $format->hash = hash_pbkdf2('sha256', $this->text.$this->author.$this->created.$this->modified, 'Eech7co8Ohloopo9Ol6baimi', 100, 12);
 
         return $format;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotification(): bool
+    {
+        return $this->notification;
+    }
+
+    /**
+     * @param bool $notification
+     */
+    public function setNotification(bool $notification): void
+    {
+        $this->notification = $notification;
     }
 }

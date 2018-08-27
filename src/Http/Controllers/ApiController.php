@@ -80,6 +80,7 @@ class ApiController extends Controller
      * @param array $args
      * @return JsonResponse
      * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\ORMException
      */
     public function postNew(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
@@ -89,6 +90,10 @@ class ApiController extends Controller
 
         if (!$q->has('uri')){
             return new EmptyResponse(400);
+        }
+
+        if (!$q->has('notification')){
+            $q->set('notification', 0);
         }
 
         foreach (["author", "email", "website", "parent"] as $k) {
@@ -150,7 +155,11 @@ class ApiController extends Controller
             /** @var Comments $comments */
             $comments = $this->entityManager->getRepository(Comment::class);
 
-            $rv = $comments->add($q->get('uri'), $q->all());
+            $rv = $comments->add($thread, $q->all());
+
+            $this->entityManager->flush();
+
+            $c = $comments->find(1);
 
             $n = 1;
         }
