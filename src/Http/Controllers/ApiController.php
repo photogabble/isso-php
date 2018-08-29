@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Adbar\Dot;
@@ -84,26 +85,26 @@ class ApiController extends Controller
      */
     public function postNew(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
-        $q = new Dot(array_filter($request->getQueryParams(), function($k) {
+        $q = new Dot(array_filter($request->getQueryParams(), function ($k) {
             return in_array($k, static::$accept);
         }, ARRAY_FILTER_USE_KEY));
 
-        if (!$q->has('uri')){
+        if (!$q->has('uri')) {
             return new EmptyResponse(400);
         }
 
-        if (!$q->has('notification')){
+        if (!$q->has('notification')) {
             $q->set('notification', 0);
         }
 
         foreach (["author", "email", "website", "parent"] as $k) {
-            if (!$q->has($k)){
+            if (!$q->has($k)) {
                 $q->set($k, (($k === 'parent') ? null : ''));
             }
         }
 
         $v = new \App\Http\Validation\Comment();
-        if (! $v->verify($q->flatten())) {
+        if (!$v->verify($q->flatten())) {
             return new JsonResponse($v->getErrors(), 400);
         }
 
@@ -115,7 +116,7 @@ class ApiController extends Controller
             $q->set('website', $this->normaliseUrl($q->get('website')));
         }
 
-        $q->set('mode', ( $this->moderation ? 2 : 1 ));
+        $q->set('mode', ($this->moderation ? 2 : 1));
 
         // @todo upgrade Tuppence to PSR-15 and use https://github.com/middlewares/psr15-middlewares to get ip
         $q->set('remote_addr', '127.0.0.1');
@@ -124,9 +125,9 @@ class ApiController extends Controller
         $threads = $this->entityManager->getRepository(Thread::class);
 
         // If thread record doesn't already exist, create one from the title param, or Referer if title isn't set.
-        if (! $thread = $threads->getThreadByUri($q->get('uri'))){
+        if (!$thread = $threads->getThreadByUri($q->get('uri'))) {
             // If title not set then attempt to parse the title of the referring url
-            if (! $q->has('title')) {
+            if (!$q->has('title')) {
                 $origin = origin($request->getHeaderLine('Referer'));
                 try {
                     $response = $this->guzzle->request('GET', $origin);
@@ -136,33 +137,34 @@ class ApiController extends Controller
                 $q->set('title', parseTitleFromHTML($response->getBody()));
             }
 
-            try{
+            try {
                 $thread = $threads->new($q->get('uri'), $q->get('title'));
 
                 // @todo #14: emit comments.new:new-thread event
 
             } catch (\Exception $e) {
-                return new TextResponse('Database error',  500);
+                return new TextResponse('Database error', 500);
             }
-
-            // @todo #14: emit comments.new:before-save event
-
-            if (! $this->guard->validate($q->get('uri'), $q->all())) {
-                // @todo #14: emit comments.new:guard event
-                return new TextResponse($this->guard->getError(), 403);
-            }
-
-            /** @var Comments $comments */
-            $comments = $this->entityManager->getRepository(Comment::class);
-
-            $rv = $comments->add($thread, $q->all());
-
-            $this->entityManager->flush();
-
-            $c = $comments->find(1);
-
-            $n = 1;
         }
+
+        // @todo #14: emit comments.new:before-save event
+
+        if (!$this->guard->validate($q->get('uri'), $q->all())) {
+            // @todo #14: emit comments.new:guard event
+            return new TextResponse($this->guard->getError(), 403);
+        }
+
+        /** @var Comments $comments */
+        $comments = $this->entityManager->getRepository(Comment::class);
+
+        $rv = $comments->add($thread, $q->all());
+        $this->entityManager->flush();
+
+        // @todo #14 emit comments.new:after-save
+
+
+        $n = 1;
+
 
         // @todo finish me
 
@@ -180,7 +182,7 @@ class ApiController extends Controller
     private function normaliseUrl(string $url): string
     {
         if (strpos($url, 'http://') === false || strpos($url, 'https://') === false) {
-            return 'http://'.$url;
+            return 'http://' . $url;
         }
         return $url;
     }
@@ -200,11 +202,11 @@ class ApiController extends Controller
         $q = $request->getQueryParams();
 
         $args = array_merge([
-            'uri' => isset($q['uri']) ? (string) $q['uri'] : '',
-            'after' => isset($q['after']) ? (int) $q['after'] : 0,
-            'parent' => isset($q['parent']) ? (int) $q['parent'] : null,
-            'limit' => isset($q['limit']) ? (int) $q['limit'] : 100,
-            'nested_limit' => isset($q['nested_limit']) ? (int) $q['nested_limit'] : 0,
+            'uri' => isset($q['uri']) ? (string)$q['uri'] : '',
+            'after' => isset($q['after']) ? (int)$q['after'] : 0,
+            'parent' => isset($q['parent']) ? (int)$q['parent'] : null,
+            'limit' => isset($q['limit']) ? (int)$q['limit'] : 100,
+            'nested_limit' => isset($q['nested_limit']) ? (int)$q['nested_limit'] : 0,
             'plain' => isset($q['plain']) ? ($q['plain'] === '1') : false,
         ], $args);
 
@@ -217,7 +219,7 @@ class ApiController extends Controller
         return new JsonResponse([
             'hidden_replies' => $count > 0 ? max($count - $args['limit'], 0) : 0,
             'id' => $args['parent'],
-            'replies' => array_map(function(Comment $comment){
+            'replies' => array_map(function (Comment $comment) {
                 return $comment->toJsonFormat();
             }, $replies),
             'total_replies' => $count
@@ -269,7 +271,7 @@ class ApiController extends Controller
      */
     public function getView(ServerRequestInterface $request, array $args = [])
     {
-        return new JsonResponse(['msg' => 'view', 'id' => (int) $args['id']]);
+        return new JsonResponse(['msg' => 'view', 'id' => (int)$args['id']]);
     }
 
     /**
@@ -280,7 +282,7 @@ class ApiController extends Controller
      */
     public function putEdit(ServerRequestInterface $request, array $args = [])
     {
-        return new JsonResponse(['msg' => 'edit', 'id' => (int) $args['id']]);
+        return new JsonResponse(['msg' => 'edit', 'id' => (int)$args['id']]);
     }
 
     /**
@@ -292,7 +294,7 @@ class ApiController extends Controller
      */
     public function deleteDelete(ServerRequestInterface $request, array $args = [])
     {
-        return new JsonResponse(['msg' => 'delete', 'id' => (int) $args['id']]);
+        return new JsonResponse(['msg' => 'delete', 'id' => (int)$args['id']]);
     }
 
     /**
@@ -304,7 +306,7 @@ class ApiController extends Controller
      */
     public function getModerate(ServerRequestInterface $request, array $args = [])
     {
-        return new JsonResponse(['msg' => 'getModerate', 'id' => (int) $args['id'], 'action' => $args['action'], 'key' => $args['key']]);
+        return new JsonResponse(['msg' => 'getModerate', 'id' => (int)$args['id'], 'action' => $args['action'], 'key' => $args['key']]);
     }
 
     /**
@@ -315,7 +317,7 @@ class ApiController extends Controller
      */
     public function postModerate(ServerRequestInterface $request, array $args = [])
     {
-        return new JsonResponse(['msg' => 'postModerate', 'id' => (int) $args['id'], 'action' => $args['action'], 'key' => $args['key']]);
+        return new JsonResponse(['msg' => 'postModerate', 'id' => (int)$args['id'], 'action' => $args['action'], 'key' => $args['key']]);
     }
 
     /**
@@ -327,7 +329,7 @@ class ApiController extends Controller
      */
     public function postLike(ServerRequestInterface $request, array $args = [])
     {
-        return new JsonResponse(['msg' => 'like', 'id' => (int) $args['id']]);
+        return new JsonResponse(['msg' => 'like', 'id' => (int)$args['id']]);
     }
 
     /**
@@ -338,7 +340,7 @@ class ApiController extends Controller
      */
     public function postDislike(ServerRequestInterface $request, array $args = [])
     {
-        return new JsonResponse(['msg' => 'dislike', 'id' => (int) $args['id']]);
+        return new JsonResponse(['msg' => 'dislike', 'id' => (int)$args['id']]);
     }
 
     /**
