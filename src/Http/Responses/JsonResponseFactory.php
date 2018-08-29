@@ -4,6 +4,7 @@ namespace App\Http\Responses;
 
 use Adbar\Dot;
 use App\Entities\Comment;
+use App\Entities\Preference;
 use App\Repositories\Preferences;
 use App\Utils\Hasher;
 use Dflydev\FigCookies\FigResponseCookies;
@@ -77,7 +78,7 @@ class JsonResponseFactory
     private function getUrlSafeSignedCookieValue(string $input):string
     {
         /** @var Preferences $preferences */
-        $preferences = $this->entityManager->getRepository(Preferences::class);
+        $preferences = $this->entityManager->getRepository(Preference::class);
 
         if (! $key = $preferences->get('session-key')) {
             throw new \Exception('Session key is not set.');
