@@ -38,6 +38,10 @@ class Hasher
             }
         }
 
+        if (empty($salt)){
+            throw new \Exception('A salt for hashing is required.');
+        }
+
         $this->salt = $salt;
         $this->algorithm = $algorithm;
     }

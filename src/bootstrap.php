@@ -29,6 +29,7 @@ $app->getContainer()->share('config', new \Adbar\Dot(include __DIR__ . '/../conf
 // Services
 //
 $app->register(new \App\Services\Guzzle());
+$app->register(new \App\Services\Hashing());
 $app->register(new \App\Services\Routes());
 $app->register(new \App\Services\Database());
 $app->register(new \App\Services\Guard());
