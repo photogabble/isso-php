@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Entities;
-use App\Http\JsonFormat;
+
 use App\Utils\BloomFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -28,6 +28,12 @@ class Comment
      * deleted but has child comments attached.
      */
     const MODE_SOFT_DELETED = 4;
+
+    /**
+     * @todo add magic getter that uses this property to expose private methods
+     * @var array
+     */
+    private $allowed = ['id', 'parent', 'text', 'author', 'website', 'mode', 'created', 'modified', 'likes', 'dislikes', 'hash', 'gravatar_image', 'notifications'];
 
     /**
      * @var int
@@ -139,7 +145,8 @@ class Comment
      */
     private $notification;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->replies = new ArrayCollection();
     }
 
@@ -160,11 +167,27 @@ class Comment
     }
 
     /**
+     * @return Thread
+     */
+    public function getThread(): Thread
+    {
+        return $this->thread;
+    }
+
+    /**
      * @param Comment $parent
      */
     public function setParent(Comment $parent): void
     {
         $this->parent = $parent;
+    }
+
+    /**
+     * @return Comment
+     */
+    public function getParent(): Comment
+    {
+        return $this->parent;
     }
 
     /**
@@ -176,11 +199,27 @@ class Comment
     }
 
     /**
+     * @return float
+     */
+    public function getCreated(): float
+    {
+        return $this->created;
+    }
+
+    /**
      * @param float $modified
      */
     public function setModified(float $modified): void
     {
         $this->modified = $modified;
+    }
+
+    /**
+     * @return float
+     */
+    public function getModified(): float
+    {
+        return $this->modified;
     }
 
     /**
@@ -192,11 +231,27 @@ class Comment
     }
 
     /**
+     * @return int
+     */
+    public function getMode(): int
+    {
+        return $this->mode;
+    }
+
+    /**
      * @param string $remote_addr
      */
     public function setRemoteAddr(string $remote_addr): void
     {
         $this->remote_addr = $remote_addr;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRemoteAddr():string
+    {
+        return $this->remote_addr;
     }
 
     /**
@@ -208,11 +263,27 @@ class Comment
     }
 
     /**
+     * @return string
+     */
+    public function getText():string
+    {
+        return $this->text;
+    }
+
+    /**
      * @param string $author
      */
     public function setAuthor(string $author): void
     {
         $this->author = $author;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthor(): string
+    {
+        return $this->author;
     }
 
     /**
@@ -224,11 +295,27 @@ class Comment
     }
 
     /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    /**
      * @param string $website
      */
     public function setWebsite(string $website): void
     {
         $this->website = $website;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWebsite(): string
+    {
+        return $this->website;
     }
 
     /**
@@ -240,6 +327,14 @@ class Comment
     }
 
     /**
+     * @return int
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
+    /**
      * @param int $dislikes
      */
     public function setDislikes(int $dislikes): void
@@ -248,12 +343,20 @@ class Comment
     }
 
     /**
+     * @return int
+     */
+    public function getDislikes():int
+    {
+        return $this->dislikes;
+    }
+
+    /**
      * @param BloomFilter $voters
      */
     public function setVoters(BloomFilter $voters = null): void
     {
-        if (is_null($voters)){
-            $voters =  new BloomFilter();
+        if (is_null($voters)) {
+            $voters = new BloomFilter();
         }
         $this->voters = serialize($voters);
     }
@@ -264,34 +367,17 @@ class Comment
     public function getVoters(): BloomFilter
     {
         $value = unserialize($this->voters);
-        if (! $value instanceof BloomFilter) {
+        if (!$value instanceof BloomFilter) {
             $value = new BloomFilter();
         }
 
         return $value;
     }
 
-    public function toJsonFormat(): JsonFormat
-    {
-        $format = new JsonFormat();
-        $format->id = $this->id;
-        $format->parent = is_null($this->parent) ? null : $this->parent->getId();
-        $format->text = $this->text;
-        $format->author = $this->author;
-        $format->website = $this->website;
-        $format->created = $this->created;
-        $format->modified = $this->modified;
-        $format->likes = $this->likes;
-        $format->dislikes = $this->dislikes;
-        $format->hash = hash_pbkdf2('sha256', $this->text.$this->author.$this->created.$this->modified, 'Eech7co8Ohloopo9Ol6baimi', 100, 12);
-
-        return $format;
-    }
-
     /**
      * @return bool
      */
-    public function isNotification(): bool
+    public function getNotification(): bool
     {
         return $this->notification;
     }
@@ -302,5 +388,13 @@ class Comment
     public function setNotification(bool $notification): void
     {
         $this->notification = $notification;
+    }
+
+    /**
+     * @return Comment[]|ArrayCollection
+     */
+    public function getReplies()
+    {
+        return $this->replies;
     }
 }
