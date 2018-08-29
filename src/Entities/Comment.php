@@ -185,7 +185,7 @@ class Comment
     /**
      * @return Comment
      */
-    public function getParent(): Comment
+    public function getParent(): ?Comment
     {
         return $this->parent;
     }
@@ -217,7 +217,7 @@ class Comment
     /**
      * @return float
      */
-    public function getModified(): float
+    public function getModified(): ?float
     {
         return $this->modified;
     }

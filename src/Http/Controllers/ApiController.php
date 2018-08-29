@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Adbar\Dot;
 use App\Entities\Comment;
 use App\Entities\Thread;
+use App\Http\Responses\JsonResponseFactory;
 use App\Repositories\Comments;
 use App\Repositories\Threads;
 use App\Utils\Guard;
@@ -52,15 +53,25 @@ class ApiController extends Controller
      * @var Guard
      */
     private $guard;
+    /**
+     * @var JsonResponseFactory
+     */
+    private $jsonResponseFactory;
 
     /**
      * ApiController constructor.
+     * @param JsonResponseFactory $jsonResponseFactory
      * @param EntityManagerInterface $entityManager
      * @param ClientInterface $guzzle
      * @param Guard $guard
      * @param App $app
      */
-    public function __construct(EntityManagerInterface $entityManager, ClientInterface $guzzle, Guard $guard, App $app)
+    public function __construct(
+        JsonResponseFactory $jsonResponseFactory,
+        EntityManagerInterface $entityManager,
+        ClientInterface $guzzle,
+        Guard $guard,
+        App $app)
     {
         parent::__construct($entityManager, $app);
 
@@ -68,6 +79,7 @@ class ApiController extends Controller
         $config = $app->getContainer()->get('config');
         $this->moderation = $config->get('moderation.enabled', true);
         $this->configuration = new Dot($config->get('general', []));
+        $this->jsonResponseFactory = $jsonResponseFactory;
         $this->guzzle = $guzzle;
         $this->guard = $guard;
     }
@@ -82,6 +94,7 @@ class ApiController extends Controller
      * @return JsonResponse
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\ORM\ORMException
+     * @throws \Exception
      */
     public function postNew(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
@@ -162,15 +175,7 @@ class ApiController extends Controller
 
         // @todo #14 emit comments.new:after-save
 
-
-        $n = 1;
-
-
-        // @todo finish me
-
-        $this->entityManager->flush(); // Commit all changes to disk...
-
-        return new JsonResponse([]);
+        return $this->jsonResponseFactory->createFromNewComment($rv);
     }
 
     /**
