@@ -5,6 +5,7 @@ namespace App\Services;
 use Adbar\Dot;
 use App\Http\Responses\JsonResponseFactory;
 use App\Utils\Hasher;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 
 class Responses extends AbstractServiceProvider
@@ -26,7 +27,11 @@ class Responses extends AbstractServiceProvider
         $this->getContainer()->add(JsonResponseFactory::class, function(){
             /** @var Dot $config */
             $config = $this->getContainer()->get('config');
-            return new JsonResponseFactory(new Dot($config->get('general', [])), $this->getContainer()->get(Hasher::class));
+
+            /** @var EntityManagerInterface $em */
+            $em = $this->getContainer()->get(EntityManagerInterface::class);
+
+            return new JsonResponseFactory($em, new Dot($config->get('general', [])), $this->getContainer()->get(Hasher::class));
         });
     }
 }
