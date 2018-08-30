@@ -2,9 +2,13 @@
 
 namespace App\Tests\Feature;
 
+use App\Entities\Thread;
 use App\Http\Controllers\ApiController;
 use App\Http\Validation\Comment;
+use App\Repositories\Comments;
+use App\Repositories\Threads;
 use App\Tests\BootsApp;
+use Doctrine\ORM\EntityManagerInterface;
 use Zend\Diactoros\ServerRequest;
 
 class CommentTest extends BootsApp
@@ -16,15 +20,28 @@ class CommentTest extends BootsApp
      */
     public function testGet()
     {
-        $this->app->getContainer()->get('config')->set('moderation.enabled', false);
+        /** @var EntityManagerInterface $em */
+        $em = $this->app->getContainer()->get(EntityManagerInterface::class);
 
-        $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
-            'text' => 'Lorem ipsum ...'
+        /** @var Comments $comments */
+        $comments = $em->getRepository(\App\Entities\Comment::class);
+
+        /** @var Threads $threads */
+        $threads = $em->getRepository(Thread::class);
+
+        $thread = $threads->new('Test', '/path/');
+
+        $comments->add($thread, [
+            'parent' => null,
+            'remote_addr' => '127.0.0.1',
+            'text' => 'Lorem ipsum ...',
+            'author' => '',
+            'email' => '',
+            'website' => '',
+            'notification' => false,
+            'mode' => 1
         ]);
-
-        $this->assertResponseStatusCodeEquals(201);
-        $this->assertJsonResponse();
-        $this->assertJsonResponseValueEquals('id', 1);
+        $em->flush();
 
         $this->makeRequest('GET', '/id/1');
         $this->assertResponseOk();
@@ -40,10 +57,11 @@ class CommentTest extends BootsApp
      */
     public function testCreate()
     {
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
-            'text' => 'Lorem ipsum ...',
-            'uri' => 'path'
-        ]));
+        $this->app->getContainer()->get('config')->set('moderation.enabled', false);
+
+        $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
+            'text' => 'Lorem ipsum ...'
+        ]);
 
         $this->assertResponseStatusCodeEquals(201);
         $this->assertJsonResponse();
@@ -58,10 +76,11 @@ class CommentTest extends BootsApp
      */
     public function textCreateWithNonAsciiText()
     {
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
-            'text' => 'Здравствуй, мир!',
-            'uri' => 'path'
-        ]));
+        $this->app->getContainer()->get('config')->set('moderation.enabled', false);
+
+        $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
+            'text' => 'Здравствуй, мир!'
+        ]);
 
         $this->assertResponseStatusCodeEquals(201);
         $this->assertJsonResponse();
