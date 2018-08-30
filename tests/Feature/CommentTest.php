@@ -16,6 +16,8 @@ class CommentTest extends BootsApp
      */
     public function testGet()
     {
+        $this->app->getContainer()->get('config')->set('moderation.enabled', false);
+
         $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
             'text' => 'Lorem ipsum ...'
         ]);
