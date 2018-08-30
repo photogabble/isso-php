@@ -128,7 +128,6 @@ class CommentTest extends BootsApp
     public function testCreateAndGetMultiple()
     {
         for ($i = 0; $i < 20; $i++) {
-
             $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
                 'text' => 'Spam'
             ]);
