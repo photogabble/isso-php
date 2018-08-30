@@ -98,11 +98,11 @@ class Comments extends EntityRepository
      * Port of isso python isso.db.comments.get
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L106
      * @param int $id
-     * @return Comment|null
+     * @return Comment|object|null
      */
     public function get(int $id): ?Comment
     {
-        // @todo
+        return $this->findOneBy(['id' => $id]);
     }
 
     /**

@@ -272,11 +272,19 @@ class ApiController extends Controller
      *
      * @param ServerRequestInterface $request
      * @param array $args
-     * @return JsonResponse
+     * @return ResponseInterface
+     * @throws \Exception
      */
     public function getView(ServerRequestInterface $request, array $args = [])
     {
-        return new JsonResponse(['msg' => 'view', 'id' => (int)$args['id']]);
+        /** @var Comments $comments */
+        $comments = $this->entityManager->getRepository(Comment::class);
+
+        if (! $found = $comments->get((int)$args['id'])) {
+            return new TextResponse('Not Found', 404);
+        }
+
+        return $this->jsonResponseFactory->createFromComment($found);
     }
 
     /**
