@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Entities\Preference;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
 
@@ -25,11 +26,16 @@ class Preferences extends EntityRepository
             'session-key' => bin2hex(random_bytes(24)),
         ];
 
-        foreach($this->defaults as $key => $value)
-        {
-            if (! $this->get($key)) {
-                $this->set($key, $value);
+        $added = [];
+
+        foreach ($this->defaults as $key => $value) {
+            if (!$this->get($key)) {
+                array_push($added, $this->set($key, $value));
             }
+        }
+
+        if (count($added) > 0) {
+            $this->getEntityManager()->flush($added);
         }
     }
 
@@ -38,10 +44,22 @@ class Preferences extends EntityRepository
      * @see https://github.com/posativ/isso/blob/master/isso/db/preferences.py#L25
      * @param string $key
      * @param mixed|null $default
+     * @return mixed
      */
-    public function get(string $key, $default=null)
+    public function get(string $key, $default = null)
     {
-        // @todo
+        try{
+            return $this->createQueryBuilder('c')
+                ->select('c.value')
+                ->where('c.key = :key')
+                ->setParameters([
+                    'key' => $key,
+                ])
+                ->getQuery()
+                ->getSingleScalarResult();
+        } catch (\Exception $e) {
+            return $default;
+        }
     }
 
     /**
@@ -49,10 +67,16 @@ class Preferences extends EntityRepository
      * @see https://github.com/posativ/isso/blob/master/isso/db/preferences.py#L34
      * @param string $key
      * @param mixed $value
+     * @return Preference
+     * @throws \Doctrine\ORM\ORMException
      */
-    public function set(string $key, $value)
+    public function set(string $key, $value): Preference
     {
-        // @todo
+        $entity = new Preference();
+        $entity->setKey($key);
+        $entity->setValue($value);
+        $this->getEntityManager()->persist($entity);
+        return $entity;
     }
 
 }
