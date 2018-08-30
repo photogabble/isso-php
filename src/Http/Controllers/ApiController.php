@@ -196,7 +196,7 @@ class ApiController extends Controller
      * GET: /
      *
      * Port of isso python isso.views.comments.fetch
-     * @see https://github.com/posativ/isso/blob/master/isso/views/comments.py#L247
+     * @see https://github.com/posativ/isso/blob/master/isso/views/comments.py#L732
      * @param ServerRequestInterface $request
      * @param array $args
      * @return JsonResponse
