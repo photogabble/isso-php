@@ -57,8 +57,6 @@ class CommentTest extends BootsApp
      */
     public function testCreate()
     {
-        $this->app->getContainer()->get('config')->set('moderation.enabled', false);
-
         $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
             'text' => 'Lorem ipsum ...'
         ]);
@@ -74,10 +72,8 @@ class CommentTest extends BootsApp
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L78
      * @throws \Exception
      */
-    public function textCreateWithNonAsciiText()
+    public function testCreateWithNonAsciiText()
     {
-        $this->app->getContainer()->get('config')->set('moderation.enabled', false);
-
         $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
             'text' => 'Здравствуй, мир!'
         ]);
@@ -95,28 +91,29 @@ class CommentTest extends BootsApp
      */
     public function testCreateMultiple()
     {
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
-            'text' => '...',
-            'uri' => 'test'
-        ]));
+        $this->makeRequest('POST', '/new?uri=%2Fnew%2F', [
+            'text' => '...'
+        ]);
 
         $this->assertResponseStatusCodeEquals(201);
         $this->assertJsonResponse();
         $this->assertJsonResponseValueEquals('id', 1);
 
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
-            'text' => '...',
-            'uri' => 'test'
-        ]));
+        $this->bootApp();
+
+        $this->makeRequest('POST', '/new?uri=%2Fnew%2F', [
+            'text' => '...'
+        ]);
 
         $this->assertResponseStatusCodeEquals(201);
         $this->assertJsonResponse();
         $this->assertJsonResponseValueEquals('id', 2);
 
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
-            'text' => '...',
-            'uri' => 'test'
-        ]));
+        $this->bootApp();
+
+        $this->makeRequest('POST', '/new?uri=%2Fnew%2F', [
+            'text' => '...'
+        ]);
 
         $this->assertResponseStatusCodeEquals(201);
         $this->assertJsonResponse();
@@ -131,17 +128,16 @@ class CommentTest extends BootsApp
     public function testCreateAndGetMultiple()
     {
         for ($i = 0; $i < 20; $i++) {
-            $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
-                'text' => 'Spam',
-                'uri' => 'path'
-            ]));
+
+            $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
+                'text' => 'Spam'
+            ]);
 
             $this->assertResponseStatusCodeEquals(201);
+            $this->bootApp();
         }
 
-        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
-            'uri' => 'path'
-        ]));
+        $this->makeRequest('GET', '/?uri=%2Fpath%2F');
 
         $this->assertResponseOk();
         $this->assertJsonResponse();
