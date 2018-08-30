@@ -70,6 +70,15 @@ class JsonResponseFactory
         return new JsonResponse($this->createJsonFormatFromComment($comment, $plain), 200);
     }
 
+    public function createFromComments(array $comments, $plain = false): ResponseInterface
+    {
+        $comments = array_map(function(Comment $comment) use ($plain) {
+            return $this->createJsonFormatFromComment($comment, $plain);
+        }, $comments);
+
+        return new JsonResponse($comments, 200);
+    }
+
     /**
      * @param Comment $comment
      * @param bool $plain should the text md be parsed?
