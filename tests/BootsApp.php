@@ -31,12 +31,21 @@ class BootsApp extends TestCase
      */
     protected $decodedJson = null;
 
+    /**
+     * Path to where the sqlite database
+     * for testing is to be found.
+     * @var string
+     */
+    protected $databasePath;
+
     protected function bootApp()
     {
         $e = new TestEmitter();
         $this->emitter = $e;
         $this->app = include __DIR__ . '/../src/bootstrap.php';
-        $this->app->getContainer()->get('config')->set('database.path', ':memory:');
+        $this->app->getContainer()->get('config')->set('database.path', $this->databasePath);
+        $this->app->getContainer()->get('config')->set('moderation.enabled', false);
+        $this->app->getContainer()->get('config')->set('guard.enabled', false);
         $this->app->getContainer()->extend('emitter')->setConcrete(function () use ($e) {
             return $e;
         });
@@ -48,8 +57,12 @@ class BootsApp extends TestCase
         });
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function setUp()
     {
+        $this->databasePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . hash('sha1', random_int(0,5000). time()) . '.sqlite';
         $this->bootApp();
         $this->runDatabaseMigrations();
     }
@@ -112,7 +125,7 @@ class BootsApp extends TestCase
             'Referer' => 'http://dev.local'
         ], $headers);
 
-        // @todo set Referer header for testing environment
+        // @todo set request ip
 
         $parts = parse_url($uri);
         $parts['query'] = (isset($parts['query']) ? $parts['query'] : '');
