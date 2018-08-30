@@ -51,25 +51,45 @@ class JsonResponseFactory
      */
     public function createFromNewComment(Comment $comment): ResponseInterface
     {
-        $parseDown = new Parsedown();
-        $parseDown->setSafeMode(true);
-
-        $format = new JsonFormat($comment);
-        $format->hash = $this->hasher->hash($comment->getEmail() || $comment->getRemoteAddr());
-        $format->text = $parseDown->text($format->text);
-
-        if ($this->configuration->get('gravatar', false) === true) {
-            $format->gravatar_image = str_replace('{}', md5($comment->getEmail()), $this->configuration->get('gravatar-url'));
-        }
-
         return FigResponseCookies::set(
-            (new JsonResponse($format, ($comment->getMode() === Comment::MODE_PENDING) ? 202 : 201)),
+            (new JsonResponse($this->createJsonFormatFromComment($comment, false), ($comment->getMode() === Comment::MODE_PENDING) ? 202 : 201)),
             SetCookie::create(sprintf('isso-%d', $comment->getId()))
                 ->withValue($this->getUrlSafeSignedCookieValue((string)$comment->getId()))
                 ->withMaxAge(parseStringToTime($this->configuration->get('max-age')))
         );
     }
 
+    /**
+     * @param Comment $comment
+     * @param bool $plain
+     * @return ResponseInterface
+     * @throws \Exception
+     */
+    public function createFromComment(Comment $comment, $plain = false): ResponseInterface
+    {
+        return new JsonResponse($this->createJsonFormatFromComment($comment, $plain), 200);
+    }
+
+    /**
+     * @param Comment $comment
+     * @param bool $plain should the text md be parsed?
+     * @return JsonFormat
+     * @throws \Exception
+     */
+    private function createJsonFormatFromComment(Comment $comment, bool $plain): JsonFormat
+    {
+        $parseDown = new Parsedown();
+        $parseDown->setSafeMode(true);
+
+        $format = new JsonFormat($comment);
+        $format->hash = $this->hasher->hash($comment->getEmail() || $comment->getRemoteAddr());
+        $format->text = ($plain === false) ? $parseDown->text($format->text) : $format->text;
+
+        if ($this->configuration->get('gravatar', false) === true) {
+            $format->gravatar_image = str_replace('{}', md5($comment->getEmail()), $this->configuration->get('gravatar-url'));
+        }
+        return $format;
+    }
     /**
      * @param string $input
      * @return string
