@@ -140,7 +140,6 @@ class Comments extends EntityRepository
     public function fetchAll(string $uri, int $mode = 5, int $after = 0, int $parent = null, string $orderBy = 'id', int $limit = 100, int $page = 0, bool $asc = true)
     {
         // @todo #28
-
     }
 
     /**
@@ -164,7 +163,7 @@ class Comments extends EntityRepository
             ->addSelect('t')
             ->innerJoin('c.thread', 't', Join::WITH, 't.uri = :uri' )
             ->andWhere('c.tid = t.id') // not sure needed...
-            ->andWhere('(:mode | c.mode = :mode)')
+            ->andWhere('BIT_OR(:mode, c.mode) = :mode')
             ->andWhere('c.created > :after')
             ->setParameters([
                 'uri' => $uri,
@@ -183,11 +182,7 @@ class Comments extends EntityRepository
             $orderBy = 'id';
         }
 
-        $q = $q->orderBy($orderBy, $asc === true ? 'ASC' : 'DESC');
-
-//        if (!is_null($offset)) {
-//            $q = $q->setFirstResult($offset);
-//        }
+        $q = $q->orderBy('c.'.$orderBy, $asc === true ? 'ASC' : 'DESC');
 
         if (!is_null($limit)) {
             $q = $q->setMaxResults($limit);
