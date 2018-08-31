@@ -216,8 +216,8 @@ class ApiController extends Controller
     {
         $q = $request->getQueryParams();
 
-        // @todo add the merge and validate to a Request object that can be consumed by other methods
-        // @todo all numbers should be validated as being a positive int
+        // @todo #19 add the merge and validate to a Request object that can be consumed by other methods
+        // @todo #20 all numbers should be validated as being a positive int
 
         // Validate limit at being a number
         if (isset($q['limit']) && !is_numeric($q['limit'])) {

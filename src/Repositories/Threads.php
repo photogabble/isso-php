@@ -12,12 +12,13 @@ class Threads extends EntityRepository
      *
      * Port of isso python isso.db.threads.__contains__
      * @see https://github.com/posativ/isso/blob/master/isso/db/threads.py#L21
+     * @see https://github.com/photogabble/isso-php/issues/21
      * @param string $uri
      * @return bool
      */
     public function contains(string $uri): bool
     {
-        return false; // @todo
+        return false; // @todo #21
     }
 
     /**
@@ -25,12 +26,13 @@ class Threads extends EntityRepository
      *
      * Port of isso python isso.db.threads.__getitem__
      * @see https://github.com/posativ/isso/blob/master/isso/db/threads.py#L25
+     * @see https://github.com/photogabble/isso-php/issues/22
      * @param string $uri
      * @return Thread
      */
     public function getThreadByUri(string $uri): ?Thread
     {
-        // @todo
+        // @todo #22
         return null;
     }
 
@@ -39,12 +41,13 @@ class Threads extends EntityRepository
      *
      * Port of isso python isso.db.threads.get
      * @see https://github.com/posativ/isso/blob/master/isso/db/threads.py#L28
+     * @see https://github.com/photogabble/isso-php/issues/23
      * @param int $id
      * @return Thread
      */
     public function get(int $id): Thread
     {
-        // @todo
+        // @todo #23
     }
 
     /**

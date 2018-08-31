@@ -10,7 +10,7 @@ class Comment
     /**
      * @param array $q
      * @return bool
-     * @todo use a basic validation lib
+     * @todo #36 use a basic validation lib
      */
     public function verify(array $q): bool
     {
@@ -52,7 +52,7 @@ class Comment
                 $this->errors[] = 'website is too long (minimum length: 254)';
             }
 
-            // @todo use a basic validation lib for checking url is valid
+            // @todo #36 use a basic validation lib for checking url is valid
         }
 
         return $this->isPassed();

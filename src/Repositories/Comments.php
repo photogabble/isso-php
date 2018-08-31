@@ -57,11 +57,12 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.activate
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L75
+     * @see https://github.com/photogabble/isso-php/issues/24
      * @param int $id
      */
     public function activate(int $id)
     {
-        // @todo
+        // @todo #24
     }
 
     /**
@@ -69,12 +70,13 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.unsubscribe
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L84
+     * @see https://github.com/photogabble/isso-php/issues/25
      * @param string $mail
      * @param int $id
      */
     public function unsubscribe(string $mail, int $id)
     {
-        // @todo
+        // @todo #25
     }
 
     /**
@@ -83,12 +85,13 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.update
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L93
+     * @see https://github.com/photogabble/isso-php/issues/26
      * @param int $id
      * @param array $data
      */
     public function update(int $id, array $data)
     {
-        // @todo
+        // @todo #26
     }
 
     /**
@@ -110,10 +113,11 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.count_modes
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L118
+     * @see https://github.com/photogabble/isso-php/issues/27
      */
     public function countModes()
     {
-        // @todo
+        // @todo #27
     }
 
     /**
@@ -121,6 +125,7 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.fetchall
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L127
+     * @see https://github.com/photogabble/isso-php/issues/28
      * @param int $mode
      * @param int $after
      * @param int|null $parent
@@ -131,7 +136,7 @@ class Comments extends EntityRepository
      */
     public function fetchAll(int $mode = 5, int $after = 0, int $parent = null, string $orderBy = 'id', int $limit = 100, int $page = 0, int $asc = 1)
     {
-        // @todo
+        // @todo #28
     }
 
     /**
@@ -139,6 +144,7 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.fetch
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L176
+     * @see https://github.com/photogabble/isso-php/issues/31
      * @param string $uri
      * @param int $mode
      * @param int $after
@@ -149,7 +155,7 @@ class Comments extends EntityRepository
      */
     public function fetch(string $uri, int $mode = 5, int $after = 0, int $parent = null, string $orderBy = 'id', int $asc = 1, int $limit = null)
     {
-        // @todo
+        // @todo #31
     }
 
     /**
@@ -157,10 +163,11 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments._remove_stale
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L210
+     * @see https://github.com/photogabble/isso-php/issues/29
      */
     public function removeStale()
     {
-        // @todo
+        // @todo #29
     }
 
     /**
@@ -175,11 +182,12 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.delete
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L225
+     * @see https://github.com/photogabble/isso-php/issues/30
      * @param int $id
      */
     public function delete(int $id)
     {
-        // @todo
+        // @todo #30
     }
 
     /**
@@ -189,13 +197,14 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.vote
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L253
+     * @see https://github.com/photogabble/isso-php/issues/32
      * @param bool $upVote
      * @param int $id
      * @param string $remoteAddr
      */
     public function vote(bool $upVote = false, int $id, string $remoteAddr)
     {
-        // @todo
+        // @todo #32
     }
 
     /**
@@ -238,12 +247,13 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.count
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L298
+     * @see https://github.com/photogabble/isso-php/issues/33
      * @param array $urls
      * @return int|void
      */
     public function count(array $urls = [])
     {
-        // @todo
+        // @todo #33
     }
 
     /**
@@ -251,11 +261,12 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.comments.purge
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L311
+     * @see https://github.com/photogabble/isso-php/issues/34
      * @param $delta
      */
     public function purge($delta)
     {
-        // @todo
+        // @todo #34
     }
 
     /**
@@ -263,12 +274,13 @@ class Comments extends EntityRepository
      *
      * Port of isso python isso.db.guard.validate
      * @see https://github.com/posativ/isso/blob/master/isso/db/spam.py#L14
+     * @see https://github.com/photogabble/isso-php/issues/35
      * @param string $uri
      * @param string $comment
      */
     public function guardValidate(string $uri, string $comment)
     {
-        // @todo
+        // @todo #35
     }
 
     /**
