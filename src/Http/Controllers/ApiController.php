@@ -8,6 +8,7 @@ use App\Entities\Thread;
 use App\Http\Responses\JsonResponseFactory;
 use App\Repositories\Comments;
 use App\Repositories\Threads;
+use App\Utils\CommentFormatter;
 use App\Utils\Guard;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface;
@@ -59,7 +60,13 @@ class ApiController extends Controller
     private $jsonResponseFactory;
 
     /**
+     * @var CommentFormatter
+     */
+    private $commentFormatter;
+
+    /**
      * ApiController constructor.
+     * @param CommentFormatter $commentFormatter
      * @param JsonResponseFactory $jsonResponseFactory
      * @param EntityManagerInterface $entityManager
      * @param ClientInterface $guzzle
@@ -67,6 +74,7 @@ class ApiController extends Controller
      * @param App $app
      */
     public function __construct(
+        CommentFormatter $commentFormatter,
         JsonResponseFactory $jsonResponseFactory,
         EntityManagerInterface $entityManager,
         ClientInterface $guzzle,
@@ -82,6 +90,7 @@ class ApiController extends Controller
         $this->jsonResponseFactory = $jsonResponseFactory;
         $this->guzzle = $guzzle;
         $this->guard = $guard;
+        $this->commentFormatter = $commentFormatter;
     }
 
     /**
@@ -201,6 +210,7 @@ class ApiController extends Controller
      * @param array $args
      * @return ResponseInterface
      * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function getFetch(ServerRequestInterface $request, array $args = [])
     {
@@ -236,22 +246,26 @@ class ApiController extends Controller
         /** @var Comments $repository */
         $repository = $this->entityManager->getRepository(Comment::class);
 
-        // @todo port reply_counts = self.comments.reply_count(uri, after=args['after'])
+        if ($args['limit'] === 0) {
+            $rootList = [];
+        } else {
+            $rootList = $repository->fetch($args['uri'], 5, $args['after'], $args['parent'], 'id', 1, $args['limit']);
+        }
+
         $replyCounts = $repository->replyCount($args['uri'], 5, $args['after']);
 
+        if (! in_array($args['parent'], array_keys($replyCounts))){
+            $replyCounts[$args['parent']] = 0;
+        }
 
-
-        $count = $repository->countCommentsByUri($args['uri'], 1, $args['parent']);
-        $replies = $repository->lookupCommentsByUri($args['uri'], 1, $args['parent'], $args['after'], $args['limit']);
-
-        return new JsonResponse([
-            'hidden_replies' => $count > 0 ? max($count - $args['limit'], 0) : 0,
+        $response = [
             'id' => $args['parent'],
-            'replies' => array_map(function (Comment $comment) {
-                return $comment->toJsonFormat();
-            }, $replies),
-            'total_replies' => $count
-        ]);
+            'total_replies' => $replyCounts[$args['parent']],
+            'hidden_replies' => $replyCounts[$args['parent']] - count($rootList),
+            'replies' => $this->commentFormatter->processFetchedList($rootList, $args['plain'])
+        ];
+
+        return new JsonResponse($response);
     }
 
     /**

@@ -70,6 +70,11 @@ class JsonResponseFactory
         return new JsonResponse($this->createJsonFormatFromComment($comment, $plain), 200);
     }
 
+    /**
+     * @param array $comments
+     * @param bool $plain
+     * @return ResponseInterface
+     */
     public function createFromComments(array $comments, $plain = false): ResponseInterface
     {
         $comments = array_map(function(Comment $comment) use ($plain) {
