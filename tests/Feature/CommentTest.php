@@ -155,28 +155,24 @@ class CommentTest extends BootsApp
      */
     public function testCreateInvalidParent()
     {
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+        $this->makeRequest('POST', '/new?uri=%2Ftest%2F', [
+            'text' => '...'
+        ]);
+
+        $this->bootApp();
+
+        $this->makeRequest('POST', '/new?uri=%2Ftest%2F', [
             'text' => '...',
-            'uri' => 'test'
-        ]));
+            'parent' => 1
+        ]);
 
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+        $this->bootApp();
+
+        $this->makeRequest('POST', '/new?uri=%2Ftest%2F', [
             'text' => '...',
-            'parent' => 1,
-            'uri' => 'test'
-        ]));
+            'parent' => 2
+        ]);
 
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
-            'text' => '...',
-            'parent' => 2,
-            'uri' => 'test'
-        ]));
-
-        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
-            'uri' => 'path'
-        ]));
-
-        $this->assertResponseOk();
         $this->assertJsonResponse();
         $this->assertJsonResponseValueEquals('parent', 1);
     }
