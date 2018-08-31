@@ -224,10 +224,10 @@ class CommentTest extends BootsApp
         $this->assertFalse($v->isPassed());
         $this->assertArrayHasKey('http://tools.ietf.org/html/rfc5321#section-4.5.3', array_flip($v->getErrors()));
 
-        $v = $factory(['text' => '...', 'parent' => null, 'author' => null, 'email' => null, 'website' => str_pad('google.de/a' , 128, 'a')]);
+        $v = $factory(['text' => '...', 'parent' => null, 'author' => null, 'email' => null, 'website' => str_pad('http://google.de/a' , 128, 'a')]);
         $this->assertTrue($v->isPassed());
 
-        $v = $factory(['text' => '...', 'parent' => null, 'author' => null, 'email' => null, 'website' => str_pad('google.de/a' , 1024, 'a')]);
+        $v = $factory(['text' => '...', 'parent' => null, 'author' => null, 'email' => null, 'website' => str_pad('http://google.de/a' , 1024, 'a')]);
         $this->assertFalse($v->isPassed());
         $this->assertArrayHasKey('website is too long (minimum length: 254)', array_flip($v->getErrors()));
 
@@ -235,7 +235,7 @@ class CommentTest extends BootsApp
 
         $urls = [
             'valid' => [
-                'example.tld',
+                'http://example.tld',
                 'http://example.tld',
                 'https://example.tld',
                 'https://example.tld:1337/',

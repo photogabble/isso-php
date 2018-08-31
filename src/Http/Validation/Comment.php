@@ -2,6 +2,8 @@
 
 namespace App\Http\Validation;
 
+use Respect\Validation\Validator;
+
 class Comment
 {
 
@@ -47,12 +49,22 @@ class Comment
             $this->errors[] = 'http://tools.ietf.org/html/rfc5321#section-4.5.3';
         }
 
+
         if (isset($q['website'])) {
+            $v = new Validator();
+            $v->addRule(Validator::url());
+
             if (strlen($q['website']) > 254) {
                 $this->errors[] = 'website is too long (minimum length: 254)';
             }
 
-            // @todo #36 use a basic validation lib for checking url is valid
+            if (strpos($q['website'], 'https://') === false && strpos($q['website'], 'http://') === false){
+                $this->errors[] = 'website is invalid';
+            } else {
+                if (!$v->validate($q['website'])){
+                    $this->errors[] = 'website is invalid';
+                }
+            }
         }
 
         return $this->isPassed();
