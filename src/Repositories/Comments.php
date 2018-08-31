@@ -35,6 +35,12 @@ class Comments extends EntityRepository
         $entity->setThread($thread);
 
         if (! is_null($c['parent']) && $parent = $this->get($c['parent'])) {
+
+            // @todo #39 make max nesting level configurable?
+            if ($this->getNestingLevel($parent) > 1){
+                $parent = $parent->getParent();
+            }
+
             $entity->setParent($parent);
         }
 
@@ -119,6 +125,29 @@ class Comments extends EntityRepository
     public function countModes()
     {
         // @todo #27
+    }
+
+    /**
+     * Return the nesting level of the input Comment.
+     * This is used to limit new comment nesting
+     * level to that which is configured.
+     *
+     * @param Comment $comment
+     * @return int
+     */
+    public function getNestingLevel(Comment $comment): int
+    {
+        if (! $parent = $comment->getParent()){
+            return 0;
+        }
+
+        $level = 1;
+        while (!is_null($parent)){
+            $parent = $parent->getParent();
+            $level++;
+        }
+
+        return $level;
     }
 
     /**
