@@ -280,23 +280,24 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testGetLimited
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L166
+     * @see https://github.com/photogabble/isso-php/issues/45
      * @throws \Exception
      */
     public function testGetLimited()
     {
+        // @todo #46 refactor test to inject comments into db and only make one request.
         for ($i=0; $i<20;$i++) {
-            $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+            $this->makeRequest('POST', '/new?uri=%2Ftest%2F', [
                 'text' => '...',
-                'uri' => 'test'
-            ]));
+            ]);
 
             $this->assertResponseStatusCodeEquals(201);
+            $this->bootApp();
         }
 
-        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
-            'uri' => 'test',
-            'limit' => 10
-        ]));
+        $this->makeRequest('GET', '/?uri=%2Ftest%2F', [
+            'limit' => 10,
+        ]);
 
         $this->assertResponseOk();
 
