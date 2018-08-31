@@ -11,7 +11,9 @@
   ],
   "require": {
     "php": ">=7.1",
+    "ext-dom": "*",
     "ext-json": "*",
+    "ext-libxml": "*",
     "photogabble/tuppence": "dev-2.0.0-dev",
     "doctrine/dbal": "^2.5",
     "doctrine/orm": "^2.5",
