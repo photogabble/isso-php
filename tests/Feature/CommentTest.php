@@ -265,14 +265,14 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testGetInvalid
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L159
+     * @see https://github.com/photogabble/isso-php/issues/43
      * @throws \Exception
      */
     public function testGetInvalid()
     {
-        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
-            'uri' => '/path/',
-            'id' => 123
-        ]));
+        $this->makeRequest('GET', '/?uri=%2Fpath%2F', [
+            'id' => 123,
+        ]);
 
         $this->assertResponseStatusCodeEquals(404);
     }
