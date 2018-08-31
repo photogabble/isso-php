@@ -50,7 +50,7 @@ class Comment
         }
 
 
-        if (isset($q['website'])) {
+        if (isset($q['website']) && !empty($q['website'])) {
             $v = new Validator();
             $v->addRule(Validator::url());
 
