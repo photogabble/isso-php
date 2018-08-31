@@ -27,6 +27,7 @@ class HashTest extends BootsApp
     /**
      * Port of isso python test_uhash
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_utils_hash.py#L28
+     * @see https://github.com/photogabble/isso-php/issues/88
      * @throws \Exception
      */
     public function testUHash()

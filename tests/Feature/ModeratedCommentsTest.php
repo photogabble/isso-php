@@ -10,6 +10,7 @@ class ModeratedCommentsTest extends BootsApp
     /**
      * Port of isso python testAddComment
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L460
+     * @see https://github.com/photogabble/isso-php/issues/72
      * @throws \Exception
      */
     public function testAddComment()

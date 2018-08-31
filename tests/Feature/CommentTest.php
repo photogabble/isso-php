@@ -309,6 +309,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testGetNested
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L177
+     * @see https://github.com/photogabble/isso-php/issues/48
      * @throws \Exception
      */
     public function testGetNested()
@@ -343,6 +344,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testGetLimitedNested
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L189
+     * @see https://github.com/photogabble/isso-php/issues/49
      * @throws \Exception
      */
     public function testGetLimitedNested()
@@ -380,6 +382,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testUpdate
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L202
+     * @see https://github.com/photogabble/isso-php/issues/50
      * @throws \Exception
      */
     public function testUpdate()
@@ -416,6 +419,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testDelete
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L218
+     * @see https://github.com/photogabble/isso-php/issues/51
      * @throws \Exception
      */
     public function testDelete()
@@ -440,6 +444,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testDeleteWithReference
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L227
+     * @see https://github.com/photogabble/isso-php/issues/52
      * @throws \Exception
      */
     public function testDeleteWithReference()
@@ -518,6 +523,7 @@ class CommentTest extends BootsApp
      *
      * Port of isso python testDeleteWithMultipleReferences
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L249
+     * @see https://github.com/photogabble/isso-php/issues/53
      * @throws \Exception
      */
     public function testDeleteWithMultipleReferences()
@@ -572,6 +578,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testPathVariations
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L276
+     * @see https://github.com/photogabble/isso-php/issues/54
      * @throws \Exception
      */
     public function testPathVariations()
@@ -603,6 +610,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testDeleteAndCreateByDifferentUsersButSamePostId
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L289
+     * @see https://github.com/photogabble/isso-php/issues/55     *
      * @throws \Exception
      */
     public function testDeleteAndCreateByDifferentUsersButSamePostId()
@@ -613,6 +621,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testHash
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L301
+     * @see https://github.com/photogabble/isso-php/issues/56
      * @throws \Exception
      */
     public function testHash()
@@ -647,6 +656,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testVisibleFields
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L316
+     * @see https://github.com/photogabble/isso-php/issues/57
      * @throws \Exception
      */
     public function testVisibleFields()
@@ -670,6 +680,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testNoFeed
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L330
+     * @see https://github.com/photogabble/isso-php/issues/58
      * @throws \Exception
      */
     public function testNoFeed()
@@ -683,6 +694,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testFeedEmpty
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L334
+     * @see https://github.com/photogabble/isso-php/issues/59
      * @throws \Exception
      */
     public function testFeedEmpty()
@@ -693,6 +705,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testFeed
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L344
+     * @see https://github.com/photogabble/isso-php/issues/60
      * @throws \Exception
      */
     public function testFeed()
@@ -703,6 +716,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testCounts
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L360
+     * @see https://github.com/photogabble/isso-php/issues/61
      * @throws \Exception
      */
     public function testCounts()
@@ -713,6 +727,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testMultipleCounts
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L382
+     * @see https://github.com/photogabble/isso-php/issues/62
      * @throws \Exception
      */
     public function testMultipleCounts()
@@ -723,6 +738,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testModify
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L394
+     * @see https://github.com/photogabble/isso-php/issues/63
      * @throws \Exception
      */
     public function testModify()
@@ -752,6 +768,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testDeleteCommentRemovesThread
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L403
+     * @see https://github.com/photogabble/isso-php/issues/64
      * @throws \Exception
      */
     public function testDeleteCommentRemovesThread()
@@ -771,6 +788,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testCSRF
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L410
+     * @see https://github.com/photogabble/isso-php/issues/65
      * @throws \Exception
      */
     public function testCSRF()
@@ -781,6 +799,7 @@ class CommentTest extends BootsApp
     /**
      * Port of isso python testPreview
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L430
+     * @see https://github.com/photogabble/isso-php/issues/66
      * @throws \Exception
      */
     public function testPreview()
