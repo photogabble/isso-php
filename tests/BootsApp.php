@@ -138,42 +138,42 @@ class BootsApp extends TestCase
 
     protected function assertResponseOk()
     {
-        $this->assertFalse(is_null($this->lastRequest));
-        $this->assertEquals(200, $this->lastRequest->getStatusCode());
+        self::assertFalse(is_null($this->lastRequest));
+        self::assertEquals(200, $this->lastRequest->getStatusCode());
     }
 
     protected function assertResponseStatusCodeEquals($code = 200)
     {
-        $this->assertFalse(is_null($this->lastRequest));
-        $this->assertEquals($code, $this->lastRequest->getStatusCode());
+        self::assertFalse(is_null($this->lastRequest));
+        self::assertEquals($code, $this->lastRequest->getStatusCode());
     }
 
     protected function assertJsonResponse()
     {
-        $this->assertInstanceOf(JsonResponse::class, $this->lastRequest);
+        self::assertInstanceOf(JsonResponse::class, $this->lastRequest);
     }
 
     protected function assertJsonResponseValueEquals($key, $expected)
     {
-        $this->assertEquals($expected, $this->getJsonResponseValue($key));
+        self::assertEquals($expected, $this->getJsonResponseValue($key));
     }
 
     protected function assertJsonResponseHasKey($expected)
     {
-        $this->assertArrayHasKey($expected, $this->getDecodedJsonResponse());
+        self::assertArrayHasKey($expected, $this->getDecodedJsonResponse());
     }
 
     protected function getJsonResponseValue($key)
     {
         $decoded = $this->getDecodedJsonResponse();
-        $this->assertArrayHasKey($key, $decoded);
+        self::assertArrayHasKey($key, $decoded);
         return $decoded[$key];
     }
 
     protected function assertJsonResponseEmpty()
     {
         $decoded = $this->getDecodedJsonResponse();
-        $this->assertEquals([], $decoded);
+        self::assertEquals([], $decoded);
     }
 
     protected function getDecodedJsonResponse()
