@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Entities\Comment;
 use App\Entities\Thread;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * Class Comments
@@ -126,15 +127,17 @@ class Comments extends EntityRepository
      * Port of isso python isso.db.comments.fetchall
      * @see https://github.com/posativ/isso/blob/master/isso/db/comments.py#L127
      * @see https://github.com/photogabble/isso-php/issues/28
+     * @param string $uri
      * @param int $mode
      * @param int $after
      * @param int|null $parent
      * @param string $orderBy
      * @param int $limit
      * @param int $page
-     * @param int $asc
+     * @param bool $asc
+     * @return Comment[]
      */
-    public function fetchAll(int $mode = 5, int $after = 0, int $parent = null, string $orderBy = 'id', int $limit = 100, int $page = 0, int $asc = 1)
+    public function fetchAll(string $uri, int $mode = 5, int $after = 0, int $parent = null, string $orderBy = 'id', int $limit = 100, int $page = 0, bool $asc = true)
     {
         // @todo #28
     }
@@ -152,10 +155,41 @@ class Comments extends EntityRepository
      * @param string $orderBy
      * @param int $asc
      * @param int|null $limit
+     * @return Comment[]
      */
     public function fetch(string $uri, int $mode = 5, int $after = 0, int $parent = null, string $orderBy = 'id', int $asc = 1, int $limit = null)
     {
-        // @todo #31
+        $q = $this->createQueryBuilder('c')
+            ->addSelect('t')
+            ->innerJoin('c.thread', 't', Join::WITH, 't.uri = :uri' )
+            ->andWhere('c.tid = t.id') // not sure needed...
+            ->andWhere('BIT_OR(:mode, c.mode) = :mode')
+            ->andWhere('c.created > :after')
+            ->setParameters([
+                'uri' => $uri,
+                'mode' => $mode,
+                'after' => $after
+            ]);
+
+        if (!is_null($parent)) {
+            $q = $q->andWhere('c.parent = :parent');
+            $q = $q->setParameter('parent', $parent);
+        } else {
+            $q = $q->andWhere('c.parent IS NULL');
+        }
+
+        if (! in_array($orderBy, ['id', 'created', 'modified', 'likes', 'dislikes'])){
+            $orderBy = 'id';
+        }
+
+        $q = $q->orderBy('c.'.$orderBy, $asc === true ? 'ASC' : 'DESC');
+
+        if (!is_null($limit)) {
+            $q = $q->setMaxResults($limit);
+        }
+
+        return $q->getQuery()
+            ->getResult();
     }
 
     /**

@@ -122,7 +122,10 @@ class CommentTest extends BootsApp
 
     /**
      * Port of isso python testCreateAndGetMultiple
+     *
+     * @todo #37 refactor to pre-fill database with 20 posts rather than doing 20 requests.
      * @see https://github.com/posativ/isso/blob/master/isso/tests/test_comments.py#L99
+     * @see https://github.com/photogabble/isso-php/issues/37
      * @throws \Exception
      */
     public function testCreateAndGetMultiple()
@@ -140,7 +143,9 @@ class CommentTest extends BootsApp
 
         $this->assertResponseOk();
         $this->assertJsonResponse();
-        $this->assertJsonResponseValueEquals('replies', 20);
+
+        $json = $this->getDecodedJsonResponse();
+        $this->assertCount(20, $json['replies']);
     }
 
     /**
