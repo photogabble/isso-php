@@ -199,12 +199,30 @@ class ApiController extends Controller
      * @see https://github.com/posativ/isso/blob/master/isso/views/comments.py#L732
      * @param ServerRequestInterface $request
      * @param array $args
-     * @return JsonResponse
+     * @return ResponseInterface
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getFetch(ServerRequestInterface $request, array $args = [])
     {
         $q = $request->getQueryParams();
+
+        // @todo add the merge and validate to a Request object that can be consumed by other methods
+        // @todo all numbers should be validated as being a positive int
+
+        // Validate limit at being a number
+        if (isset($q['limit']) && !is_numeric($q['limit'])) {
+            return new TextResponse('limit should be integer', 400);
+        }
+
+        // Validate parent as being a number
+        if (isset($q['parent']) && !is_numeric($q['parent'])) {
+            return new TextResponse('parent should be integer', 400);
+        }
+
+        // Validate nested_limit as being a number
+        if (isset($q['nested_limit']) && !is_numeric($q['nested_limit'])) {
+            return new TextResponse('nested_limit should be integer', 400);
+        }
 
         $args = array_merge([
             'uri' => isset($q['uri']) ? (string)$q['uri'] : '',
@@ -217,6 +235,11 @@ class ApiController extends Controller
 
         /** @var Comments $repository */
         $repository = $this->entityManager->getRepository(Comment::class);
+
+        // @todo port reply_counts = self.comments.reply_count(uri, after=args['after'])
+        $replyCounts = $repository->replyCount($args['uri'], 5, $args['after']);
+
+
 
         $count = $repository->countCommentsByUri($args['uri'], 1, $args['parent']);
         $replies = $repository->lookupCommentsByUri($args['uri'], 1, $args['parent'], $args['after'], $args['limit']);

@@ -206,10 +206,31 @@ class Comments extends EntityRepository
      * @param string $url
      * @param int $mode
      * @param int $after
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function replyCount(string $url, int $mode = 5, int $after = 0)
+    public function replyCount(string $url, int $mode = 5, int $after = 0): array
     {
-        // @todo
+        $return = [];
+        $query = $this->getEntityManager()
+            ->getConnection()
+            ->prepare('SELECT comments.parent,count(*) as `c` FROM comments INNER JOIN threads ON threads.uri=:url AND comments.tid=threads.id AND (:mode | comments.mode = :mode) AND comments.created > :after GROUP BY comments.parent');
+
+        $query->execute([
+            'url' => $url,
+            'mode' => $mode,
+            'after' => $after
+        ]);
+
+        if (! $result = $query->fetch()){
+            return $return;
+        }
+
+        foreach ($result as $row) {
+            $return[(int)$row->parent] = (int)$row->c;
+        }
+
+        return $return;
     }
 
     /**
