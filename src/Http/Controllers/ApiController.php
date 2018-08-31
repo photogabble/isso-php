@@ -265,7 +265,9 @@ class ApiController extends Controller
             'replies' => $this->commentFormatter->processFetchedList($rootList, $args['plain'])
         ];
 
-        return new JsonResponse($response);
+        // @todo this is not finished, it doesn't return nested replies
+
+        return new JsonResponse($response, count($response['replies']) > 0 ? 200 : 404);
     }
 
     /**
