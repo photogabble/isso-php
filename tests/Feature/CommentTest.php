@@ -390,26 +390,27 @@ class CommentTest extends BootsApp
      */
     public function testUpdate()
     {
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+        $this->makeRequest('POST', '/new?uri=%2Fpath%2F', [
             'text' => 'Lorem ipsum ...',
-            'uri' => '/path/'
-        ]));
+        ]);
 
         $this->assertResponseStatusCodeEquals(201);
 
-        $this->runRequest(new ServerRequest([], [], '/new', 'PUT', 'php://input', [], [], [
+        $this->bootApp();
+
+        $this->makeRequest('PUT', '/id/1', [
             'text' => 'Hello World',
             'author' => 'me',
             'website' => 'http://example.com/',
-            'uri' => '/path/'
-        ]));
+        ]);
 
         $this->assertResponseOk();
 
-        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
-            'uri' => '/path/',
+        $this->bootApp();
+
+        $this->makeRequest('GET', '/id/1', [
             'plain' => 1
-        ]));
+        ]);
 
         $this->assertResponseOk();
 
