@@ -19,6 +19,7 @@ use Photogabble\Tuppence\App;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\EmptyResponse;
+use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\TextResponse;
 
@@ -412,11 +413,11 @@ class ApiController extends Controller
      * GET: /demo
      * @param ServerRequestInterface $request
      * @param array $args
-     * @return JsonResponse
+     * @return ResponseInterface
      */
     public function getDemo(ServerRequestInterface $request, array $args = [])
     {
-        return new JsonResponse(['msg' => 'demo']);
+        return new HtmlResponse(file_get_contents(APP_ROOT . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'demo.html') );
     }
 
     /**
