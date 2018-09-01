@@ -3,3 +3,4 @@
 /vendor/
 composer.lock
 sami.phar
+node_modules
