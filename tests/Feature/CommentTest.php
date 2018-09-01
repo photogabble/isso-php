@@ -8,6 +8,8 @@ use App\Http\Validation\Comment;
 use App\Repositories\Comments;
 use App\Repositories\Threads;
 use App\Tests\BootsApp;
+use Dflydev\FigCookies\Cookies;
+use Dflydev\FigCookies\SetCookie;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\Diactoros\ServerRequest;
 

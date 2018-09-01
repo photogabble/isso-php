@@ -10,6 +10,8 @@ use App\Repositories\Comments;
 use App\Repositories\Threads;
 use App\Utils\CommentFormatter;
 use App\Utils\Guard;
+use Dflydev\FigCookies\Cookie;
+use Dflydev\FigCookies\Cookies;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -209,7 +211,6 @@ class ApiController extends Controller
      * @param ServerRequestInterface $request
      * @param array $args
      * @return ResponseInterface
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\DBAL\DBALException
      */
     public function getFetch(ServerRequestInterface $request, array $args = [])
@@ -336,12 +337,16 @@ class ApiController extends Controller
 
     /**
      * PUT: /id/<int:id>
+     *  Port of isso python isso.views.comments.edit
+     *
+     * @see https://github.com/posativ/isso/blob/master/isso/views/comments.py#L403
      * @param ServerRequestInterface $request
      * @param array $args
-     * @return JsonResponse
+     * @return ResponseInterface
      */
     public function putEdit(ServerRequestInterface $request, array $args = [])
     {
+        $n = $request->getCookieParams();
         return new JsonResponse(['msg' => 'edit', 'id' => (int)$args['id']]);
     }
 
