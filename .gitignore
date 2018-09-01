@@ -4,3 +4,4 @@
 composer.lock
 sami.phar
 node_modules
+resources/js/components
