@@ -70,3 +70,4 @@ composer --working-dir=/vagrant_data install
 
 cd /vagrant_data/resources/js/
 bower --allow-root install almond requirejs requirejs-text jade
+r.js -o build.embed.js
