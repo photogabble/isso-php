@@ -314,25 +314,26 @@ class CommentTest extends BootsApp
      */
     public function testGetNested()
     {
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+        $this->makeRequest('POST', '/new?uri=%2Ftest%2F', [
             'text' => '...',
-            'uri' => 'test'
-        ]));
+        ]);
 
         $this->assertResponseStatusCodeEquals(201);
 
-        $this->runRequest(new ServerRequest([], [], '/new', 'POST', 'php://input', [], [], [
+        $this->bootApp();
+
+        $this->makeRequest('POST', '/new?uri=%2Ftest%2F', [
             'text' => '...',
-            'uri' => 'test',
             'parent' => 1
-        ]));
+        ]);
 
         $this->assertResponseStatusCodeEquals(201);
 
-        $this->runRequest(new ServerRequest([], [], '/', 'GET', 'php://input', [], [], [
-            'uri' => 'test',
+        $this->bootApp();
+
+        $this->makeRequest('GET', '/?uri=%2Ftest%2F', [
             'parent' => 1
-        ]));
+        ]);
 
         $this->assertResponseOk();
 
