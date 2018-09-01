@@ -2,7 +2,7 @@
 
 namespace App\Console;
 
-use League\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
