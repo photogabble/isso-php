@@ -8,7 +8,7 @@
      */
     'database' => [
         'driver' => 'pdo_sqlite',
-        'path' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'comments.sqlite',
+        'path' => __DIR__ . DIRECTORY_SEPARATOR . 'comments.sqlite',
     ],
 
     'general' => [
