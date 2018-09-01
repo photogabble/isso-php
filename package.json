@@ -1,0 +1,30 @@
+{
+  "name": "isso-php",
+  "version": "1.10.6",
+  "description": "A PHP port-in-progress of the Disqus alternative ",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/photogabble/isso-php.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/photogabble/isso-php/issues"
+  },
+  "homepage": "https://github.com/photogabble/isso-php#readme",
+  "devDependencies": {
+    "bower": "^1.8.4",
+    "jade": "^1.11.0",
+    "requirejs": "^2.3.6",
+    "uglify-js": "^3.4.9",
+    "almond": "^0.3.3",
+    "requirejs-text": "^2.0.15"
+  }
+}
