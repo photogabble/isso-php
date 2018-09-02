@@ -1,4 +1,4 @@
 <?php
-/** @var \Photogabble\Tuppence\App; $app */
+/** @var \Photogabble\Tuppence\App $app */
 $app = include '../src/bootstrap.php';
 $app->run();
