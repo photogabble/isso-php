@@ -34,17 +34,17 @@ class Comments extends EntityRepository
         $entity = new Comment();
         $entity->setThread($thread);
 
-        if (! is_null($c['parent']) && $parent = $this->get($c['parent'])) {
+        if (!is_null($c['parent']) && $parent = $this->get($c['parent'])) {
 
             // @todo #39 make max nesting level configurable?
-            if ($this->getNestingLevel($parent) > 1){
+            if ($this->getNestingLevel($parent) > 1) {
                 $parent = $parent->getParent();
             }
 
             $entity->setParent($parent);
         }
 
-        $entity->setCreated(isset($c['created'])? $c['created'] : time());
+        $entity->setCreated(isset($c['created']) ? $c['created'] : time());
         $entity->setMode($c['mode']);
         $entity->setRemoteAddr($c['remote_addr']);
         $entity->setText($c['text']);
@@ -137,12 +137,12 @@ class Comments extends EntityRepository
      */
     public function getNestingLevel(Comment $comment): int
     {
-        if (! $parent = $comment->getParent()){
+        if (!$parent = $comment->getParent()) {
             return 0;
         }
 
         $level = 1;
-        while (!is_null($parent)){
+        while (!is_null($parent)) {
             $parent = $parent->getParent();
             $level++;
         }
@@ -190,8 +190,8 @@ class Comments extends EntityRepository
     {
         $q = $this->createQueryBuilder('c')
             ->addSelect('t')
-            ->innerJoin('c.thread', 't', Join::WITH, 't.uri = :uri' )
-            ->andWhere('c.tid = t.id') // not sure needed...
+            ->innerJoin('c.thread', 't', Join::WITH, 't.uri = :uri')
+            ->andWhere('c.tid = t.id')// not sure needed...
             ->andWhere('BIT_OR(:mode, c.mode) = :mode')
             ->andWhere('c.created > :after')
             ->setParameters([
@@ -207,11 +207,11 @@ class Comments extends EntityRepository
             $q = $q->andWhere('c.parent IS NULL');
         }
 
-        if (! in_array($orderBy, ['id', 'created', 'modified', 'likes', 'dislikes'])){
+        if (!in_array($orderBy, ['id', 'created', 'modified', 'likes', 'dislikes'])) {
             $orderBy = 'id';
         }
 
-        $q = $q->orderBy('c.'.$orderBy, $asc === true ? 'ASC' : 'DESC');
+        $q = $q->orderBy('c.' . $orderBy, $asc === true ? 'ASC' : 'DESC');
 
         if (!is_null($limit)) {
             $q = $q->setMaxResults($limit);
@@ -287,16 +287,12 @@ class Comments extends EntityRepository
         $query = $this->getEntityManager()
             ->getConnection()
             ->executeQuery(
-                'SELECT comments.parent,count(*) as `c` FROM comments INNER JOIN threads ON threads.uri=:url AND comments.tid=threads.id AND (:mode | comments.mode = :mode) AND comments.created > :after GROUP BY comments.parent',
-                [
-                    'url' => $url,
-                    'mode' => $mode,
-                    'after' => $after
-                ]
+                'SELECT comments.parent,count(*) as `c` FROM comments INNER JOIN threads ON threads.uri=? AND comments.tid=threads.id AND (? | comments.mode = ?) AND comments.created > ? GROUP BY comments.parent',
+                [$url, $mode, $mode, $after],
+                ['string', 'integer', 'integer', 'integer']
             );
-        $n =1;
 
-        if (! $result = $query->fetchAll()){
+        if (!$result = $query->fetchAll()) {
             return $return;
         }
 
@@ -367,7 +363,7 @@ class Comments extends EntityRepository
             'time' => time()
         ]);
 
-        return (int) $query->fetch()['COUNT(id)'];
+        return (int)$query->fetch()['COUNT(id)'];
     }
 
     /**
@@ -389,7 +385,7 @@ class Comments extends EntityRepository
             'remote_addr' => $comment['remote_addr']
         ]);
 
-        return (int) $query->fetch()['COUNT(id)'];
+        return (int)$query->fetch()['COUNT(id)'];
     }
 
     /**
