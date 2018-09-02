@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use Adbar\Dot;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Setup;
@@ -15,7 +17,8 @@ class Database extends AbstractServiceProvider implements BootableServiceProvide
     /** @var array */
     protected $provides = [
         EntityManagerInterface::class,
-        Connection::class
+        Connection::class,
+        DebugStack::class
     ];
 
     /**
@@ -27,15 +30,17 @@ class Database extends AbstractServiceProvider implements BootableServiceProvide
      */
     public function register()
     {
-        $this->getContainer()->share(Connection::class, function () {
-            $configuration = $this->getContainer()->get('config');
+        /** @var Dot $configuration */
+        $configuration = $this->getContainer()->get('config');
+
+        $this->getContainer()->share(Connection::class, function () use ($configuration) {
             return DriverManager::getConnection($configuration['database'], new \Doctrine\DBAL\Configuration());
         });
 
-        $this->getContainer()->share(EntityManagerInterface::class, function () {
-            $configuration = $this->getContainer()->get('config');
+        $this->getContainer()->share(DebugStack::class, new DebugStack());
 
-            return EntityManager::create(
+        $this->getContainer()->share(EntityManagerInterface::class, function () use ($configuration) {
+            $em = EntityManager::create(
                 $configuration['database'],
                 Setup::createAnnotationMetadataConfiguration(
                     [
@@ -44,6 +49,12 @@ class Database extends AbstractServiceProvider implements BootableServiceProvide
                     $configuration['debug']
                 )
             );
+
+            if ($configuration->get('debug', false) === true) {
+                $em->getConnection()->getConfiguration()->setSQLLogger($this->getContainer()->get(DebugStack::class));
+            }
+
+            return $em;
         });
     }
 
