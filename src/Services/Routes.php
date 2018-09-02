@@ -4,6 +4,7 @@ namespace App\Services;
 
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
+use Middlewares\JsonPayload;
 use Photogabble\Tuppence\App;
 
 class Routes extends AbstractServiceProvider implements BootableServiceProviderInterface
@@ -33,6 +34,8 @@ class Routes extends AbstractServiceProvider implements BootableServiceProviderI
     {
         /** @var App $app */
         $app = $this->getContainer()->get(App::class);
+
+        $app->middleware(new JsonPayload);
 
         $app->get('/', '\App\Http\Controllers\ApiController::getFetch');
         $app->post('/new', '\App\Http\Controllers\ApiController::postNew');
