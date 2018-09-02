@@ -110,9 +110,11 @@ class ApiController extends Controller
      */
     public function postNew(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
-        $a = $request->getParsedBody();
+        if (! is_array($request->getParsedBody())){
+            return new EmptyResponse(400);
+        }
 
-        $q = new Dot(array_filter($request->getQueryParams(), function ($k) {
+        $q = new Dot(array_filter(array_merge($request->getQueryParams(), $request->getParsedBody()), function ($k) {
             return in_array($k, static::$accept);
         }, ARRAY_FILTER_USE_KEY));
 
