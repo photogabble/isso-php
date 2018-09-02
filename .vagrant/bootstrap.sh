@@ -48,6 +48,7 @@ sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.0/apach
 sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.0/apache2/php.ini
 sudo sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.0/apache2/php.ini
 sudo cp /vagrant_data/.vagrant/000-default.conf /etc/apache2/sites-available/000-default.conf
+sudo cp /vagrant_data/xdebug.ini /etc/php/7.2/apache2/conf.d/20-xdebug.ini
 sudo a2enmod actions php7.2 alias rewrite ssl
 sudo service apache2 restart
 
