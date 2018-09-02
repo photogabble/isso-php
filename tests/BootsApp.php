@@ -9,9 +9,11 @@ use GuzzleHttp\ClientInterface;
 use Photogabble\Tuppence\App;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
+use Zend\Diactoros\Stream;
 
 class BootsApp extends TestCase
 {
@@ -113,16 +115,16 @@ class BootsApp extends TestCase
      * @todo rename to runRequest
      * @param string $method
      * @param string $uri
-     * @param array $queryParams
+     * @param string|array $body
      * @param array $headers
      * @param array $cookies
      * @return ResponseInterface
      * @throws \Exception
      */
-    protected function makeRequest(string $method, string $uri, array $queryParams = [], array $headers = [], array $cookies = []): ResponseInterface
+    protected function makeRequest(string $method, string $uri, $body = 'php://input', array $headers = [], array $cookies = []): ResponseInterface
     {
         $headers = array_merge([
-            'Referer' => 'http://dev.local'
+            'Referer' => 'http://dev.local',
         ], $headers);
 
         // @todo set request ip
@@ -130,8 +132,18 @@ class BootsApp extends TestCase
         $parts = parse_url($uri);
         $parts['query'] = (isset($parts['query']) ? $parts['query'] : '');
         parse_str($parts['query'], $query);
-        $queryParams = array_merge($query, $queryParams);
-        $request = new ServerRequest([], [], $parts['path'], $method, 'php://input', $headers, $cookies, $queryParams);
+
+        if (is_array($body)){
+            $stream = fopen('php://memory', 'r+');
+            fwrite($stream, json_encode($body));
+            if (! isset($headers['Content-Type']) && !in_array($method, ['GET', 'HEAD', 'OPTIONS'])){
+                $headers['Content-Type'] ='application/json';
+            }
+            $body = new Stream($stream);
+            $body->rewind();
+        }
+
+        $request = new ServerRequest([], [], $parts['path'], $method, $body, $headers, $cookies, $query);
 
         return $this->runServerRequest($request);
     }
