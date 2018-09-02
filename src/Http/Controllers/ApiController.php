@@ -269,14 +269,14 @@ class ApiController extends Controller
         $response = [
             'id' => $args['parent'],
             'total_replies' => $replyCounts[$args['parent']],
-            'hidden_replies' => $replyCounts[$args['parent']] - count($rootList),
+            'hidden_replies' => max($replyCounts[$args['parent']] - count($rootList), 0),
             'replies' => $this->commentFormatter->processFetchedList($rootList, $args['plain'])
         ];
 
         // <<<< to here should be contained within the JsonResponseFactory?
 
         if (is_null($args['parent'])){
-            throw new \Exception('This method is not yet finished... see todo below');
+            //throw new \Exception('This method is not yet finished... see todo below');
         }
 
         // @todo this is not finished, it doesn't return nested replies

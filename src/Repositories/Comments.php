@@ -286,15 +286,17 @@ class Comments extends EntityRepository
         $return = [];
         $query = $this->getEntityManager()
             ->getConnection()
-            ->prepare('SELECT comments.parent,count(*) as `c` FROM comments INNER JOIN threads ON threads.uri=:url AND comments.tid=threads.id AND (:mode | comments.mode = :mode) AND comments.created > :after GROUP BY comments.parent');
+            ->executeQuery(
+                'SELECT comments.parent,count(*) as `c` FROM comments INNER JOIN threads ON threads.uri=:url AND comments.tid=threads.id AND (:mode | comments.mode = :mode) AND comments.created > :after GROUP BY comments.parent',
+                [
+                    'url' => $url,
+                    'mode' => $mode,
+                    'after' => $after
+                ]
+            );
+        $n =1;
 
-        $query->execute([
-            'url' => $url,
-            'mode' => $mode,
-            'after' => $after
-        ]);
-
-        if (! $result = $query->fetch()){
+        if (! $result = $query->fetchAll()){
             return $return;
         }
 
