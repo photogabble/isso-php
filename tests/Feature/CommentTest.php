@@ -8,8 +8,6 @@ use App\Http\Validation\Comment;
 use App\Repositories\Comments;
 use App\Repositories\Threads;
 use App\Tests\BootsApp;
-use Dflydev\FigCookies\Cookies;
-use Dflydev\FigCookies\SetCookie;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\Diactoros\ServerRequest;
 
@@ -297,9 +295,7 @@ class CommentTest extends BootsApp
             $this->bootApp();
         }
 
-        $this->makeRequest('GET', '/?uri=%2Ftest%2F', [
-            'limit' => 10,
-        ]);
+        $this->makeRequest('GET', '/?uri=%2Ftest%2F&limit=10');
 
         $this->assertResponseOk();
 
