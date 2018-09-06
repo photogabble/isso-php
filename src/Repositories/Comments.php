@@ -297,7 +297,7 @@ class Comments extends EntityRepository
         }
 
         foreach ($result as $row) {
-            $return[(int)$row->parent] = (int)$row->c;
+            $return[is_null($row['parent']) ? null : (int)$row['parent']] = (int)$row['c'];
         }
 
         return $return;
