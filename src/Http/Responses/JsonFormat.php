@@ -111,5 +111,6 @@ class JsonFormat
         $this->likes = $comment->getLikes();
         $this->dislikes = $comment->getDislikes();
         $this->mode = $comment->getMode();
+        $this->replies = $comment->getReplies()->toArray();
     }
 }

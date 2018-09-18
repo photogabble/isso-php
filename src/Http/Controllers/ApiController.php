@@ -10,8 +10,6 @@ use App\Repositories\Comments;
 use App\Repositories\Threads;
 use App\Utils\CommentFormatter;
 use App\Utils\Guard;
-use Dflydev\FigCookies\Cookie;
-use Dflydev\FigCookies\Cookies;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -110,7 +108,7 @@ class ApiController extends Controller
      */
     public function postNew(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
-        if (! is_array($request->getParsedBody())){
+        if (!is_array($request->getParsedBody())) {
             return new EmptyResponse(400);
         }
 
@@ -217,6 +215,7 @@ class ApiController extends Controller
      * @param array $args
      * @return ResponseInterface
      * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
      */
     public function getFetch(ServerRequestInterface $request, array $args = [])
     {
@@ -245,7 +244,7 @@ class ApiController extends Controller
             'after' => isset($q['after']) ? (int)$q['after'] : 0,
             'parent' => isset($q['parent']) ? (int)$q['parent'] : null,
             'limit' => isset($q['limit']) ? (int)$q['limit'] : 100,
-            'nested_limit' => isset($q['nested_limit']) ? (int)$q['nested_limit'] : 0,
+            'nested_limit' => isset($q['nested_limit']) ? (int)$q['nested_limit'] : null,
             'plain' => isset($q['plain']) ? ($q['plain'] === '1') : false,
         ], $args);
 
@@ -257,31 +256,11 @@ class ApiController extends Controller
         } else {
             $rootList = $repository->fetch($args['uri'], 5, $args['after'], $args['parent'], 'id', 1, $args['limit']);
         }
-
-        // From here >>>>
-
-        $replyCounts = $repository->replyCount($args['uri'], 5, $args['after']);
-
-        if (! in_array($args['parent'], array_keys($replyCounts))){
-            $replyCounts[$args['parent']] = 0;
-        }
-
-        $response = [
-            'id' => $args['parent'],
-            'total_replies' => $replyCounts[$args['parent']],
-            'hidden_replies' => max($replyCounts[$args['parent']] - count($rootList), 0),
-            'replies' => $this->commentFormatter->processFetchedList($rootList, $args['plain'])
-        ];
-
-        // <<<< to here should be contained within the JsonResponseFactory?
-
-        if (is_null($args['parent'])){
-            //throw new \Exception('This method is not yet finished... see todo below');
-        }
-
-        // @todo this is not finished, it doesn't return nested replies
-
-        return new JsonResponse($response, count($response['replies']) > 0 ? 200 : 404);
+        return $this->jsonResponseFactory->createFromCommentCollection(
+            $rootList,
+            $repository->replyCount($args['uri'], 5, $args['after']),
+            $args
+        );
     }
 
     /**
@@ -333,11 +312,11 @@ class ApiController extends Controller
         /** @var Comments $comments */
         $comments = $this->entityManager->getRepository(Comment::class);
 
-        if (! $found = $comments->get((int)$args['id'])) {
+        if (!$found = $comments->get((int)$args['id'])) {
             return new TextResponse('Not Found', 404);
         }
 
-        return $this->jsonResponseFactory->createFromComment($found);
+        return $this->jsonResponseFactory->createFromSingleComment($found);
     }
 
     /**
@@ -421,7 +400,7 @@ class ApiController extends Controller
      */
     public function getDemo(ServerRequestInterface $request, array $args = [])
     {
-        return new HtmlResponse(file_get_contents(APP_ROOT . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'demo.html') );
+        return new HtmlResponse(file_get_contents(APP_ROOT . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'demo.html'));
     }
 
     /**

@@ -33,7 +33,12 @@ class Responses extends AbstractServiceProvider
             /** @var EntityManagerInterface $em */
             $em = $this->getContainer()->get(EntityManagerInterface::class);
 
-            return new JsonResponseFactory($em, new Dot($config->get('general', [])), $this->getContainer()->get(Hasher::class));
+            return new JsonResponseFactory(
+                $em,
+                $this->getContainer()->get(CommentFormatter::class),
+                new Dot($config->get('general', [])),
+                $this->getContainer()->get(Hasher::class)
+            );
         });
 
         $this->getContainer()->add(CommentFormatter::class, function(){

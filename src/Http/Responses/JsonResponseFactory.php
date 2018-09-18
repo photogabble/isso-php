@@ -6,11 +6,11 @@ use Adbar\Dot;
 use App\Entities\Comment;
 use App\Entities\Preference;
 use App\Repositories\Preferences;
+use App\Utils\CommentFormatter;
 use App\Utils\Hasher;
 use Dflydev\FigCookies\FigResponseCookies;
 use Dflydev\FigCookies\SetCookie;
 use Doctrine\ORM\EntityManagerInterface;
-use Parsedown;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -32,13 +32,24 @@ class JsonResponseFactory
     private $entityManager;
 
     /**
+     * @var CommentFormatter
+     */
+    private $commentFormatter;
+
+    /**
      * JsonFormatFactory constructor.
      * @param EntityManagerInterface $entityManager
+     * @param CommentFormatter $commentFormatter
      * @param Dot $configuration
      * @param Hasher $hasher
      */
-    public function __construct(EntityManagerInterface $entityManager, Dot $configuration, Hasher $hasher)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        CommentFormatter $commentFormatter,
+        Dot $configuration,
+        Hasher $hasher)
     {
+        $this->commentFormatter = $commentFormatter;
         $this->entityManager = $entityManager;
         $this->configuration = $configuration;
         $this->hasher = $hasher;
@@ -52,7 +63,7 @@ class JsonResponseFactory
     public function createFromNewComment(Comment $comment): ResponseInterface
     {
         return FigResponseCookies::set(
-            (new JsonResponse($this->createJsonFormatFromComment($comment, false), ($comment->getMode() === Comment::MODE_PENDING) ? 202 : 201)),
+            (new JsonResponse($this->commentFormatter->createJsonFormatFromComment($comment, false), ($comment->getMode() === Comment::MODE_PENDING) ? 202 : 201)),
             SetCookie::create(sprintf('isso-%d', $comment->getId()))
                 ->withValue($this->getUrlSafeSignedCookieValue((string)$comment->getId()))
                 ->withMaxAge(parseStringToTime($this->configuration->get('max-age')))
@@ -65,9 +76,46 @@ class JsonResponseFactory
      * @return ResponseInterface
      * @throws \Exception
      */
-    public function createFromComment(Comment $comment, $plain = false): ResponseInterface
+    public function createFromSingleComment(Comment $comment, $plain = false): ResponseInterface
     {
-        return new JsonResponse($this->createJsonFormatFromComment($comment, $plain), 200);
+        return new JsonResponse($this->commentFormatter->createJsonFormatFromComment($comment, $plain), 200);
+    }
+
+    /**
+     * @param array $comments
+     * @param array $replyCounts
+     * @param array $args
+     * @return ResponseInterface
+     * @throws \Exception
+     */
+    public function createFromCommentCollection(array $comments, array $replyCounts, array $args): ResponseInterface
+    {
+        if (! in_array($args['parent'], array_keys($replyCounts))){
+            $replyCounts[$args['parent']] = 0;
+        }
+
+        $response = [
+            'id' => $args['parent'],
+            'total_replies' => $replyCounts[$args['parent']],
+            'hidden_replies' => max($replyCounts[$args['parent']] - count($comments), 0),
+            'replies' => $this->commentFormatter->processFetchedList($comments, $args['plain'])
+        ];
+
+        /** @var JsonFormat $comment */
+        foreach ($response['replies'] as &$comment)
+        {
+            if (isset($replyCounts[$comment->id])) {
+                $comment->total_replies = $replyCounts[$comment->id];
+            } else {
+                $comment->total_replies = 0;
+                $comment->replies = [];
+            }
+        } unset($comment);
+
+
+        // @todo this is not finished, it doesn't return nested replies
+
+        return new JsonResponse($response, count($response['replies']) > 0 ? 200 : 404);
     }
 
     /**
@@ -78,32 +126,12 @@ class JsonResponseFactory
     public function createFromComments(array $comments, $plain = false): ResponseInterface
     {
         $comments = array_map(function(Comment $comment) use ($plain) {
-            return $this->createJsonFormatFromComment($comment, $plain);
+            return $this->commentFormatter->createJsonFormatFromComment($comment, $plain);
         }, $comments);
 
         return new JsonResponse($comments, 200);
     }
 
-    /**
-     * @param Comment $comment
-     * @param bool $plain should the text md be parsed?
-     * @return JsonFormat
-     * @throws \Exception
-     */
-    private function createJsonFormatFromComment(Comment $comment, bool $plain): JsonFormat
-    {
-        $parseDown = new Parsedown();
-        $parseDown->setSafeMode(true);
-
-        $format = new JsonFormat($comment);
-        $format->hash = $this->hasher->hash($comment->getEmail() || $comment->getRemoteAddr());
-        $format->text = ($plain === false) ? $parseDown->text($format->text) : $format->text;
-
-        if ($this->configuration->get('gravatar', false) === true) {
-            $format->gravatar_image = str_replace('{}', md5($comment->getEmail()), $this->configuration->get('gravatar-url'));
-        }
-        return $format;
-    }
     /**
      * @param string $input
      * @return string
