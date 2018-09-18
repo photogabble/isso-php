@@ -2,6 +2,7 @@
 
 namespace App\Tests\Feature;
 
+use Adbar\Dot;
 use App\Entities\Thread;
 use App\Http\Controllers\ApiController;
 use App\Http\Validation\Comment;
@@ -348,6 +349,10 @@ class CommentTest extends BootsApp
      */
     public function testGetLimitedNested()
     {
+        /** @var Dot $config */
+        $config = $this->app->getContainer()->get('config');
+        $config->set('guard.enabled', false);
+
         $this->makeRequest('POST', '/new?uri=%2Ftest%2F', [
             'text' => '...',
         ]);
